@@ -34,6 +34,25 @@ export type PostsOfBloggerType = {
     items: [ PostType | PostType[] ]
 }
 
+export type UsersType = {
+    id: number
+    login: string
+}
+
+export type UsersWithPassType = {
+    id: number
+    login: string
+    password: string
+}
+
+export type UsersExtendedType = {
+    pagesCount: number
+    page: number
+    pageSize: number
+    totalCount: number
+    items: [ UsersType | UsersType[] ]
+}
+
 
 
 
@@ -45,13 +64,15 @@ export const client = new MongoClient(mongoUri)
 const db = client.db("socialNetwork")
 export const bloggersCollection = db.collection<BloggersType>("bloggers")
 export const postCollection = db.collection<PostType>("posts")
+export const usersCollection = db.collection<UsersType>("users")
+
 
 export async function runDb() {
     try {
         // Connect the client to the server
         await client.connect();
         // Establish and verify connection
-        await client.db("bloggers").command({ping: 1});
+        await client.db("socialNetwork").command({ping: 1});
         console.log("Connected successfully to mongo server");
     } catch {
         console.log("Can't connect to DB")

@@ -1,16 +1,12 @@
-import {NextFunction, Request, Response, Router} from "express";
+import {Request, Response, Router} from "express";
 import {bloggersService} from "../domain/bloggers-service";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authMiddleware} from "../middlewares/auth-middleware";
 import {fieldsValidationMiddleware} from "../middlewares/fields-validation-middleware";
-import {postsRepository} from "../repositories/posts-db-repository";
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
 
 export const bloggersRouter = Router({})
 
-
-// const nameValidation = body('name').trim().isLength({min: 1, max: 15}).isString()
-// const youtubeValidation = body('youtubeUrl').trim().isLength({min: 1, max: 100}).isString().isURL()
 
 bloggersRouter.get('/',
     async (req: Request, res: Response) => {
