@@ -1,7 +1,4 @@
-// import {__bloggers} from "./bloggers-db-repository";
 import {bloggersCollection, BloggersType, client, postCollection, PostsOfBloggerType, PostType} from "./db";
-import {bloggersRepository} from "./bloggers-db-repository";
-import {bloggers} from "./bloggers-local-repository";
 
 
 export const postsRepository = {
@@ -29,36 +26,23 @@ export const postsRepository = {
         return post[0]
     },
 
-    async getPostById (postId: number): Promise<PostType | null> {
+    async getPostById (postId: string): Promise<PostType | null> {
         const post  = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
         return post;
     },
 
-    async updatePost (postId: number, title: string, shortDescription: string, content: string, bloggerId: number): Promise<boolean>  {
+    async updatePost (postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean>  {
         const result = await postCollection.updateOne({id: postId}, {$set: {title, shortDescription, content, bloggerId}})
         return result.matchedCount === 1
 
     },
 
-    async deletePost (postId: number): Promise<boolean>  {
-
+    async deletePost (postId: string): Promise<boolean>  {
         const result = await postCollection.deleteOne({id: postId})
-
         return result.deletedCount === 1
-
-        // let postCount = posts.length
-        //
-        // posts = posts.filter(b => b.id !== postId)
-        //
-        // if (postCount > posts.length) {
-        //     return true;
-        // } else {
-        //     return false;
-        // }
-
     },
 
-    async isPost (postId: number) {
+    async isPost (postId: string) {
 
         const post: PostType | null = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
         return post;
@@ -68,5 +52,19 @@ export const postsRepository = {
         } else {
             return false;
         }
-    }
+    },
+
+    async isPostId (postId: string) {
+
+        const post: PostType | null = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
+        return post;
+
+        if (post) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+
 }

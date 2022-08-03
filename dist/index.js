@@ -8,7 +8,6 @@ const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3002;
 app.get('/', (req, res) => {
-    debugger;
     res.send('Hello World!!!!!!');
 });
 app.listen(port, () => {

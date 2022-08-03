@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {bloggersService} from "../domain/bloggers-service";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
-import {authMiddleware} from "../middlewares/auth-middleware";
+import {authBaseMiddleware} from "../middlewares/auth-base-middleware";
 import {fieldsValidationMiddleware} from "../middlewares/fields-validation-middleware";
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
 import {usersService} from "../domain/users-service";
@@ -19,7 +19,7 @@ usersRouter.get('/',
 )
 
 usersRouter.post('/',
-    authMiddleware,
+    authBaseMiddleware,
     fieldsValidationMiddleware.loginValidation,
     fieldsValidationMiddleware.passwordValidation,
     inputValidationMiddleware,
@@ -31,9 +31,9 @@ usersRouter.post('/',
 
 
 usersRouter.delete('/:id',
-    authMiddleware,
+    authBaseMiddleware,
     async (req: Request, res: Response) => {
-        const isDeleted = await usersService.deleteUser(+req.params.id)
+        const isDeleted = await usersService.deleteUser(req.params.id)
         if (isDeleted) {
             res.send(204)
         } else {

@@ -13,7 +13,7 @@ export const usersRepository = {
     async getAllUsers(pageNumber: number, pageSize: number): Promise<UsersExtendedType | undefined | null> {
 
         // @ts-ignore
-        const users = await usersCollection.find({}, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+        const users = await usersCollection.find({}, {projection: {_id: 0, password:0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
 
         const bloggersCount = await usersCollection.count({})
         const pagesCount = Math.ceil(bloggersCount / pageSize)
@@ -38,16 +38,22 @@ export const usersRepository = {
         return user;
     },
 
-    async getUserAccessDataByLogin(login: string): Promise<UsersWithPassType> {
+    async findUserByLogin(login: string): Promise<UsersWithPassType> {
         const user = await usersCollection.findOne({login: login}, {projection: {_id: 0}})
         // @ts-ignore
         return user
     },
 
-    async deleteUser(id: number): Promise<boolean> {
+    async deleteUser(id: string): Promise<boolean> {
         const result = await usersCollection.deleteOne({id: id})
         return result.deletedCount === 1
-    }
+    },
+
+    async findUserById(userId: string): Promise<UsersType> {
+        const user = await usersCollection.findOne({id: userId}, {projection: {_id: 0, password: 0}})
+        // @ts-ignore
+        return user
+    },
 
 
 }

@@ -28,7 +28,7 @@ export const usersService = {
     async createUser(login: string, password: string): Promise<UsersType> {
 
         const newUser = {
-            id: +(new Date()),
+            id: (+(new Date())).toString(),
             login,
             password
         }
@@ -37,18 +37,22 @@ export const usersService = {
         return createdUserDb;
     },
 
+
+    async deleteUser(id: string): Promise<boolean> {
+        return usersRepository.deleteUser(id)
+    },
+
+    async findUserById(userId: string): Promise<UsersType | undefined | null> {
+        const user = await usersRepository.findUserById(userId)
+        return user
+    },
+
     async checkCredentials(login: string, password: string) {
-        const user = await usersRepository.getUserAccessDataByLogin(login)
+        const user = await usersRepository.findUserByLogin(login)
         if(!user) return false
         if(user.password !== password) {
             return false
         }
-        return true
-    },
-
-    async deleteUser(id: number): Promise<boolean> {
-        return usersRepository.deleteUser(id)
-    },
-
-
+        return user
+    }
 }

@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 export type BloggersType = {
-    id: number
+    id: string
     name: string
     youtubeUrl: string
 }
@@ -18,11 +18,11 @@ export type BloggersExtendedType = {
 }
 
 export type PostType = {
-    id: number
+    id: string
     title: string
     shortDescription: string
     content: string
-    bloggerId: number
+    bloggerId: string
     bloggerName: string
 }
 
@@ -35,12 +35,12 @@ export type PostsOfBloggerType = {
 }
 
 export type UsersType = {
-    id: number
+    id: string
     login: string
 }
 
 export type UsersWithPassType = {
-    id: number
+    id: string
     login: string
     password: string
 }
@@ -51,6 +51,23 @@ export type UsersExtendedType = {
     pageSize: number
     totalCount: number
     items: [ UsersType | UsersType[] ]
+}
+
+export type CommentType = {
+    postId: string,
+    id: string,
+    content: string,
+    userId: string,
+    userLogin: string,
+    addedAt: object
+}
+
+export type CommentsExtendedType = {
+    pagesCount: number
+    page: number
+    pageSize: number
+    totalCount: number
+    items: [ CommentType | CommentType[] ]
 }
 
 
@@ -65,6 +82,7 @@ const db = client.db("socialNetwork")
 export const bloggersCollection = db.collection<BloggersType>("bloggers")
 export const postCollection = db.collection<PostType>("posts")
 export const usersCollection = db.collection<UsersType>("users")
+export const commentsCollection = db.collection<CommentType>("comments")
 
 
 export async function runDb() {
