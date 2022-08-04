@@ -13,7 +13,8 @@ const app = express()
 app.use(cors())
 app.use(bodyParser())
 
-const port = process.env.PORT || 5000
+// const port = process.env.PORT || 5000
+const port = process.env.PORT 
 
 app.use('/bloggers', bloggersRouter)
 app.use('/posts', postsRouter)
