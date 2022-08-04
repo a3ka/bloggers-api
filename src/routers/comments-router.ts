@@ -42,7 +42,7 @@ commentsRouter.put('/:commentId',
         const updatedComment = await commentsService.updateComment(req.params.commentId, req.body.content)
 
         if (updatedComment) {
-            res.status(200).send(updatedComment);
+            res.status(204).send(updatedComment);
         } else {
             res.send(400)
         }
@@ -74,7 +74,7 @@ commentsRouter.delete('/:commentId', authBearerMiddleware, async (req: Request, 
         const isDeleted = await commentsService.deleteComment(req.params.commentId)
 
         if (isDeleted) {
-            res.send(200)
+            res.send(204)
         } else {
             res.send(404)
         }

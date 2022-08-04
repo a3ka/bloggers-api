@@ -97,6 +97,8 @@ postsRouter.delete('/:postId', authBaseMiddleware, async (req: Request, res: Res
 
 postsRouter.post('/:postId/comments',
     authBearerMiddleware,
+    fieldsValidationMiddleware.commentContentValidation,
+    inputValidationMiddleware,
 
     async (req: Request, res: Response) => {
 
@@ -138,7 +140,7 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
         //     return
         // }
 
-        res.status(201).send(comments)
+        res.status(200).send(comments)
     }
 )
 
