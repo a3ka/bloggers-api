@@ -59,7 +59,7 @@ bloggersRouter.put('/:bloggerId',
 bloggersRouter.delete('/:bloggerId',
     authBaseMiddleware,
     async (req: Request, res: Response) => {
-        const isDeleted = await bloggersService.deleteBlogger(req.params.bloggerId)
+        const isDeleted = await bloggersService.deleteBlogger(req.params.bloggerId.toString())
         if (isDeleted) {
             res.send(204)
         } else {
