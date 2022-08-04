@@ -104,10 +104,7 @@ postsRouter.post('/:postId/comments',
 
     async (req: Request, res: Response) => {
 
-
         const post = await postsService.getPostById(req.params.postId)
-
-        debugger
 
         if (!post) {
             res.status(404).send({errorsMessages: [{message: "Post with specified postId doesn't exists", field: "postId"}]});
@@ -124,6 +121,28 @@ postsRouter.post('/:postId/comments',
         // }
 
         res.status(201).send(newComment)
+    }
+)
+
+postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
+
+        const post = await postsService.getPostById(req.params.postId)
+
+        if (!post) {
+            res.status(404).send({errorsMessages: [{message: "Post with specified postId doesn't exists", field: "postId"}]});
+            return
+        }
+
+        // @ts-ignore
+        const comments = await commentsService.getAllCommentsByPostId(req.params.postId)
+
+        // if (!newComment) {
+        //     res.status(400).send(
+        //         {errorsMessages: [{message: "asfdsafsafa", field: "asdfdsf"}]})
+        //     return
+        // }
+
+        res.status(201).send(comments)
     }
 )
 

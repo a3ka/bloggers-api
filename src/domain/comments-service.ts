@@ -1,27 +1,16 @@
 
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
 import {postsRepository} from "../repositories/posts-db-repository";
-import {BloggersExtendedType, CommentType, PostsOfBloggerType, PostType} from "../repositories/db";
+import {BloggersExtendedType, CommentsExtendedType, CommentType, PostsOfBloggerType, PostType} from "../repositories/db";
 import {commentsRepository} from "../repositories/comments-db-repository";
 
 
 
 export const commentsService = {
 
-    async getAllCommentsByPostId (pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<{}> {
-
-        const postsDb = await postsRepository.getAllPosts(+pageNumber, +pageSize)
-        // @ts-ignore
-        const posts = {...postsDb}
-
-        // @ts-ignore
-        for (let i = 0; i < posts.items.length; i++) {
-            // @ts-ignore
-            delete posts.items[i]._id
-        }
-
+    async getAllCommentsByPostId (postId: string, pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<CommentsExtendedType | undefined | null> {
+        const posts = await commentsRepository.getAllCommentsToPost(postId, +pageNumber, +pageSize)
         return posts
-
     },
 
     async createCommentByPostId (user:any, postId: string, content:string): Promise<CommentType | undefined> {

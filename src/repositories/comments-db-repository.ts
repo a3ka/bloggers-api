@@ -1,7 +1,7 @@
 import {
     bloggersCollection,
     BloggersType,
-    client, commentsCollection,
+    client, commentsCollection, CommentsExtendedType,
     CommentType,
     postCollection,
     PostsOfBloggerType,
@@ -10,18 +10,18 @@ import {
 
 
 export const commentsRepository = {
-    async getAllPosts (pageNumber: number, pageSize:number): Promise<PostsOfBloggerType | undefined | null> {
+    async getAllCommentsToPost (postId: string, pageNumber: number, pageSize:number): Promise<CommentsExtendedType | undefined | null> {
 
-        const postsCount = await postCollection.count({})
-        const pagesCount = Math.ceil(postsCount / pageSize)
-        const posts: PostType[] | PostType = await postCollection.find({}).skip((pageNumber-1)*pageSize).limit(pageSize).toArray()
+        const commentsCount = await commentsCollection.count({postId})
+        const pagesCount = Math.ceil(commentsCount / pageSize)
+        const comments: CommentType[] | CommentType = await commentsCollection.find({postId}, {projection: {_id: 0, postId: 0}}).skip((pageNumber-1)*pageSize).limit(pageSize).toArray()
 
         const result = {
             pagesCount: pagesCount,
             page: pageNumber,
             pageSize,
-            totalCount: postsCount,
-            items: posts
+            totalCount: commentsCount,
+            items: comments
         }
         // @ts-ignore
         return result
