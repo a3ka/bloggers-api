@@ -1,29 +1,6 @@
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
-import {BloggersExtendedType, BloggersType, PostsOfBloggerType, PostType} from "../repositories/db";
+import {BloggersExtendedType, BloggersType, PostsOfBloggerType} from "../repositories/db";
 import {postsRepository} from "../repositories/posts-db-repository";
-
-const _ = require("lodash");
-
-
-// function omit(obj:any, ...props:any) {
-//     const result = { ...obj };
-//     props.forEach(function (prop:any) {
-//         delete result[prop];
-//     });
-//     return result;
-// }
-
-function omit_Id(obj:any) {
-    const result = { ...obj };
-    if(obj.items){
-        for (let i = 0; i < result.items.length; i++) {
-            delete result.items[i]._id
-        }
-    } else {
-        delete result._id
-    }
-    return result
-}
 
 
 export const bloggersService = {
@@ -31,7 +8,6 @@ export const bloggersService = {
     async getAllBloggers(pageNumber: string = '1' || undefined, pageSize:string = '10' || undefined, searchNameTerm: string | null = null): Promise<BloggersExtendedType | undefined | null> {
 
         const bloggersDb = await bloggersRepository.getAllBloggers(+pageNumber, +pageSize, searchNameTerm)
-        // const bloggers = omit_Id(bloggersDb)
         return bloggersDb
     },
 
