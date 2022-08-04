@@ -1,14 +1,10 @@
 import {Request, Response, Router} from "express";
 import {postsService} from "../domain/posts-service";
-import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authBaseMiddleware} from "../middlewares/auth-base-middleware";
-import {bloggerIdExistenceValidationMiddleware} from "../middlewares/bloggerIdExistence-validation-middleware";
 import {fieldsValidationMiddleware} from "../middlewares/fields-validation-middleware";
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
-import {bloggersService} from "../domain/bloggers-service";
 import {authBearerMiddleware} from "../middlewares/auth-bearer-middleware";
-import {postsRepository} from "../repositories/posts-db-repository";
 import {commentsService} from "../domain/comments-service";
 
 
