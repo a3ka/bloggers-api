@@ -62,6 +62,10 @@ export type CommentType = {
     addedAt: object
 }
 
+export type CommentContentType = {
+    content: string
+}
+
 export type CommentsExtendedType = {
     pagesCount: number
     page: number

@@ -1,7 +1,14 @@
 
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
 import {postsRepository} from "../repositories/posts-db-repository";
-import {BloggersExtendedType, CommentsExtendedType, CommentType, PostsOfBloggerType, PostType} from "../repositories/db";
+import {
+    BloggersExtendedType,
+    CommentContentType,
+    CommentsExtendedType,
+    CommentType,
+    PostsOfBloggerType,
+    PostType
+} from "../repositories/db";
 import {commentsRepository} from "../repositories/comments-db-repository";
 
 
@@ -11,6 +18,11 @@ export const commentsService = {
     async getAllCommentsByPostId (postId: string, pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<CommentsExtendedType | undefined | null> {
         const posts = await commentsRepository.getAllCommentsToPost(postId, +pageNumber, +pageSize)
         return posts
+    },
+
+    async findComment (commentId: string): Promise<CommentType | undefined | null> {
+        const comment = await commentsRepository.findComment(commentId)
+        return comment
     },
 
     async createCommentByPostId (user:any, postId: string, content:string): Promise<CommentType | undefined> {
@@ -32,20 +44,12 @@ export const commentsService = {
         }
     },
 
-    async updateComment (postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean>  {
-        return postsRepository.updatePost(postId, title, shortDescription, content, bloggerId)
+    async updateComment (commentId: string, content: string): Promise<CommentContentType>  {
+        return commentsRepository.updateComment(commentId, content)
     },
 
-    async deleteComment (postId: string): Promise<boolean>  {
-        return postsRepository.deletePost(postId)
-    },
-
-    async getCommentById (postId: string): Promise<PostType | null> {
-
-        return postsRepository.getPostById(postId)
+    async deleteComment (commentId: string): Promise<boolean>  {
+        return commentsRepository.deleteComment(commentId)
     }
-
-
-
 
 }

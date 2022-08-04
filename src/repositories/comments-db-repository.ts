@@ -1,7 +1,7 @@
 import {
     bloggersCollection,
     BloggersType,
-    client, commentsCollection, CommentsExtendedType,
+    client, CommentContentType, commentsCollection, CommentsExtendedType,
     CommentType,
     postCollection,
     PostsOfBloggerType,
@@ -23,8 +23,15 @@ export const commentsRepository = {
             totalCount: commentsCount,
             items: comments
         }
+
         // @ts-ignore
         return result
+    },
+
+    async findComment (commentId: string): Promise<CommentType | undefined | null> {
+        const comment = await commentsCollection.findOne({id: commentId}, {projection: {_id: 0, postId: 0}})
+        // @ts-ignore
+        return comment
     },
 
     async createComment (newComment: CommentType): Promise<CommentType | undefined> {
@@ -34,45 +41,20 @@ export const commentsRepository = {
         return comment
     },
 
-    async getPostById (postId: string): Promise<PostType | null> {
-        const post  = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
-        return post;
+
+    async updateComment (commentId: string, content: string): Promise<CommentContentType>  {
+        const update = await commentsCollection.updateOne({id: commentId}, {$set: {content}})
+
+        const updatedComment = await commentsCollection.findOne({id: commentId}, {projection: {_id: 0, postId: 0, id: 0, userId: 0, userLogin: 0, addedAt: 0}})
+
+        // @ts-ignore
+        return updatedComment
+
     },
 
-    async updatePost (postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean>  {
-        const result = await postCollection.updateOne({id: postId}, {$set: {title, shortDescription, content, bloggerId}})
-        return result.matchedCount === 1
-
-    },
-
-    async deletePost (postId: string): Promise<boolean>  {
-        const result = await postCollection.deleteOne({id: postId})
+    async deleteComment (commentId: string): Promise<boolean>  {
+        const result = await commentsCollection.deleteOne({id: commentId})
         return result.deletedCount === 1
-    },
-
-    async isPost (postId: string) {
-
-        const post: PostType | null = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
-        return post;
-
-        if (post) {
-            return true;
-        } else {
-            return false;
-        }
-    },
-
-    async isPostId (postId: string) {
-
-        const post: PostType | null = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
-        return post;
-
-        if (post) {
-            return true;
-        } else {
-            return false;
-        }
-    },
-
+    }
 
 }

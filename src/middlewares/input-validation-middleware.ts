@@ -6,19 +6,6 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
 
     const errorsMessages = errors.array({onlyFirstError: true}).map((error) => ({message: error.msg, field: error.param}))
 
-
-    // const getErrors = (errorsMessages: any) => {
-    //     if(errorsMessages.length > 1) {
-    //         if(errorsMessages[0].field === errorsMessages[1].field) {
-    //             return [errorsMessages[0]]
-    //         } else {
-    //             return errorsMessages
-    //         }
-    //     } else {
-    //         return errorsMessages
-    //     }
-    // }
-
     if (!errors.isEmpty()) {
         // res.status(400).send({ errorsMessages: getErrors(errorsMessages)});
         res.status(400).json({ errorsMessages: errorsMessages});

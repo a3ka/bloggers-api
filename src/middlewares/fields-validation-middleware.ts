@@ -14,6 +14,9 @@ export const fieldsValidationMiddleware = {
     passwordValidation: body('password').trim().isLength({min: 6, max: 20}).isString(),
 
 
+    commentContentValidation: body('content').trim().isLength({min: 20, max: 300}).isString()
+
+
     // bloggerIdErrorsMessage: { errorsMessages: [{message: "Problem with a bloggerId field", field: "bloggerId"}] }
 
 
