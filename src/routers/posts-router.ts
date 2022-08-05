@@ -112,12 +112,6 @@ postsRouter.post('/:postId/comments',
         // @ts-ignore
         const newComment = await commentsService.createCommentByPostId(req.user, req.params.postId, req.body.content)
 
-        // if (!newComment) {
-        //     res.status(400).send(
-        //         {errorsMessages: [{message: "asfdsafsafa", field: "asdfdsf"}]})
-        //     return
-        // }
-
         res.status(201).send(newComment)
     }
 )
@@ -134,12 +128,6 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
 
         // @ts-ignore
         const comments = await commentsService.getAllCommentsByPostId(req.params.postId, req.query.PageNumber, req.query.PageSize)
-
-        // if (!newComment) {
-        //     res.status(400).send(
-        //         {errorsMessages: [{message: "asfdsafsafa", field: "asdfdsf"}]})
-        //     return
-        // }
 
         res.status(200).send(comments)
     }
