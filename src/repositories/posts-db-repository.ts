@@ -27,6 +27,7 @@ export const postsRepository = {
     },
 
     async getPostById (postId: string): Promise<PostType | null> {
+        
         const post  = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
         return post;
     },
@@ -40,31 +41,7 @@ export const postsRepository = {
     async deletePost (postId: string): Promise<boolean>  {
         const result = await postCollection.deleteOne({id: postId})
         return result.deletedCount === 1
-    },
-
-    async isPost (postId: string) {
-
-        const post: PostType | null = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
-        return post;
-
-        if (post) {
-            return true;
-        } else {
-            return false;
-        }
-    },
-
-    async isPostId (postId: string) {
-
-        const post: PostType | null = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
-        return post;
-
-        if (post) {
-            return true;
-        } else {
-            return false;
-        }
-    },
+    }
 
 
 }

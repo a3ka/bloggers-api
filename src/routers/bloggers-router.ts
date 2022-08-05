@@ -12,7 +12,12 @@ bloggersRouter.get('/',
     async (req: Request, res: Response) => {
 
         // @ts-ignore
-        const bloggers = await bloggersService.getAllBloggers(req.query.PageNumber, req.query.PageSize, req.query.SearchNameTerm)
+        const bloggers = await bloggersService.getAllBloggers(
+            // @ts-ignore
+            req.query.PageNumber,
+            req.query.PageSize,
+            req.query.SearchNameTerm
+        )
         res.status(200).send(bloggers);
     }
 )

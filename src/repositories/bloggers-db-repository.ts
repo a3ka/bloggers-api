@@ -30,7 +30,6 @@ export const bloggersRepository = {
             return result
         } else {
 
-            // @ts-ignore
             const bloggers = await bloggersCollection.find({}, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
 
             const bloggersCount = await bloggersCollection.count({})
@@ -49,11 +48,11 @@ export const bloggersRepository = {
     },
 
     async createBlogger(newBlogger: BloggersType): Promise<BloggersType> {
-        const result = await bloggersCollection.insertOne(newBlogger)
-        const blogger = await bloggersCollection.find({id: newBlogger.id}, {projection: {_id: 0}}).toArray()
+        await bloggersCollection.insertOne(newBlogger)
+        const blogger = await bloggersCollection.findOne({id: newBlogger.id}, {projection: {_id: 0}})
 
         // @ts-ignore
-        return blogger[0];
+        return blogger;
     },
 
     async getBloggerById(bloggerId: string): Promise<BloggersType | null> {

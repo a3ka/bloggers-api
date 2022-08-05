@@ -5,10 +5,13 @@ import {postsRepository} from "../repositories/posts-db-repository";
 
 export const bloggersService = {
 
-    async getAllBloggers(pageNumber: string = '1' || undefined, pageSize:string = '10' || undefined, searchNameTerm: string | null = null): Promise<BloggersExtendedType | undefined | null> {
+    async getAllBloggers(
+        pageNumber: string = '1',
+        pageSize :string = '10',
+        searchNameTerm: string | null = null
+    ): Promise<BloggersExtendedType | undefined | null> {
 
-        const bloggersDb = await bloggersRepository.getAllBloggers(+pageNumber, +pageSize, searchNameTerm)
-        return bloggersDb
+        return bloggersRepository.getAllBloggers(+pageNumber, +pageSize, searchNameTerm)
     },
 
     async createBlogger(name: string, youtubeUrl: string): Promise<BloggersType> {
