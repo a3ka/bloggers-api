@@ -30,7 +30,8 @@ export const usersService = {
         const newUser = {
             id: (+(new Date())).toString(),
             login,
-            password
+            password,
+            isConfirmed: false
         }
         const createdUserDb = await usersRepository.createUser(newUser)
 
@@ -44,15 +45,6 @@ export const usersService = {
 
     async findUserById(userId: string): Promise<UsersType | undefined | null> {
         const user = await usersRepository.findUserById(userId)
-        return user
-    },
-
-    async checkCredentials(login: string, password: string) {
-        const user = await usersRepository.findUserByLogin(login)
-        if(!user) return false
-        if(user.password !== password) {
-            return false
-        }
         return user
     }
 }

@@ -1,25 +1,69 @@
-
-import { UsersExtendedType, UsersType} from "../repositories/db";
-import {postsRepository} from "../repositories/posts-db-repository";
 import {usersRepository} from "../repositories/users-db-repository";
 import {emailManager} from "../managers/email-manager";
-
+import {v4 as uuidv4} from 'uuid'
+import add from 'date-fns/add'
 
 
 export const authService = {
 
-    async userRegistration (login: string, email: string, password: string) {
-        // Registration in DataBase
-        return emailManager.sendEmailConfirmationCode(email)
-    }
-    ,
-
     async checkCredentials(login: string, password: string) {
-        const user = await usersRepository.findUserByLogin(login)
-        if(!user) return false
-        if(user.password !== password) {
-            return false
-        }
-        return user
+    const user = await usersRepository.findUserByLogin(login)
+    if(!user) return false
+    if(user.password !== password) {
+        return false
     }
+    return user
+},
+
+    async userRegistration(login: string, email: string, password: string) {
+        // Registration in DataBase
+        const newUser = {
+            accountData: {
+                id: (+(new Date())).toString(),
+                login,
+                password,
+                email: email,
+                isConfirmed: false
+            },
+            emailConfirmation: {
+                email,
+                confirmationCode: uuidv4(),
+                expirationDate: add(new Date(), {
+                    hours: 3,
+                    minutes: 3
+                }),
+                isConfirmed: false
+            }
+        }
+
+        await usersRepository.createUser(newUser.accountData)
+        await usersRepository.insertToDbUnconfirmedEmail(newUser.emailConfirmation)
+
+        try {
+            await emailManager.sendEmailConfirmationCode(email, newUser.emailConfirmation.confirmationCode)
+        } catch (err) {
+            console.error(err)
+            usersRepository.deleteUser(newUser.accountData.id)
+            usersRepository.deleteUserUnconfirmedEmail(newUser.emailConfirmation.email)
+            return null
+        }
+        return true
+    },
+
+    async userRegConfirmation(confirmationCode: string): Promise<boolean> {
+        let user = await usersRepository.findUserByConfirmCode(confirmationCode)
+        debugger
+        if(!user) return false
+        if(user.accountData?.isConfirmed === true) return false
+        if(user.emailConfirmation?.confirmationCode !== confirmationCode) return false
+        // if(user.emailConfirmation.expirationDate < new Date()) return false
+
+        let email = user.emailConfirmation.email
+
+        let result = await usersRepository.updateEmailConfirmation(email)
+
+
+        return true
+    }
+
 }

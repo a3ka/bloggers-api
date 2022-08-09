@@ -1,5 +1,7 @@
 import {MongoClient} from 'mongodb'
 import dotenv from "dotenv";
+import {v4 as uuidv4} from "uuid";
+import add from "date-fns/add";
 
 dotenv.config();
 
@@ -37,12 +39,14 @@ export type PostsOfBloggerType = {
 export type UsersType = {
     id: string
     login: string
+    isConfirmed: boolean
 }
 
 export type UsersWithPassType = {
     id: string
     login: string
     password: string
+    isConfirmed: boolean
 }
 
 export type UsersExtendedType = {
@@ -51,6 +55,13 @@ export type UsersExtendedType = {
     pageSize: number
     totalCount: number
     items: [ UsersType | UsersType[] ]
+}
+
+export type UsersEmailConfDataType = {
+    email: string
+    confirmationCode: string
+    expirationDate: Date
+    isConfirmed: boolean
 }
 
 export type CommentType = {
@@ -86,6 +97,7 @@ const db = client.db("socialNetwork")
 export const bloggersCollection = db.collection<BloggersType>("bloggers")
 export const postCollection = db.collection<PostType>("posts")
 export const usersCollection = db.collection<UsersType>("users")
+export const usersEmailConfDataCollection = db.collection<UsersEmailConfDataType>("usersEmailConfData")
 export const commentsCollection = db.collection<CommentType>("comments")
 
 
