@@ -1,5 +1,4 @@
 import {Request, Response, Router} from "express";
-import nodemailer from "nodemailer";
 import {emailAdapter} from "../adapters/email-adapter";
 
 export const emilRouter = Router({})
