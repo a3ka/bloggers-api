@@ -37,7 +37,7 @@ authRouter.post('/registration',
     async (req: Request, res: Response) => {
         const userRegistration = await authService.userRegistration(req.body.login, req.body.email, req.body.password)
 
-        res.status(200).send(userRegistration)
+        res.status(204).send(userRegistration)
 
     }
 )
