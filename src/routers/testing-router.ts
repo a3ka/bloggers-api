@@ -18,8 +18,6 @@ testingRouter.delete('/all-data',
             const delAllBloggers = await bloggersRepository.deleteAllBloggers()
             const delAllComments = await commentsRepository.deleteAllComments()
 
-            debugger
-
         res.sendStatus(204)
     }
 )
