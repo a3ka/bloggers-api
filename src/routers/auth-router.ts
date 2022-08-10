@@ -53,14 +53,21 @@ authRouter.post('/registration-confirmation',
     }
 )
 
-// authRouter.post('/registration-email-resending',
-//     fieldsValidationMiddleware.emailValidation,
-//     inputValidationMiddleware,
-//
-//     async (req: Request, res: Response) => {
-//         const userRegistration = await usersService.userRegistration(req.body.login, req.body.email, req.body.password)
-//     }
-// )
+authRouter.post('/registration-email-resending',
+    fieldsValidationMiddleware.emailValidation,
+    inputValidationMiddleware,
+
+    async (req: Request, res: Response) => {
+
+        const result = await authService.resendingEmailConfirm(req.body.email)
+
+        if(result){
+            res.status(204).send()
+        } else {
+            res.sendStatus(400)
+        }
+    }
+)
 
 
 

@@ -61,6 +61,21 @@ export const usersRepository = {
         return user
     },
 
+    async findUserByEmail(email: string){
+
+        const emailData = await usersEmailConfDataCollection.findOne({email}, {projection: {_id: 0}})
+
+        const accountData = await usersCollection.findOne({email}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
+
+        const user = {
+            accountData,
+            emailConfirmation: emailData
+        }
+        debugger
+        // @ts-ignore
+        return user
+    },
+
     async findUserByConfirmCode(confirmationCode: string) {
         const emailData = await usersEmailConfDataCollection.findOne({confirmationCode: confirmationCode}, {projection: {_id: 0}})
 
@@ -70,14 +85,20 @@ export const usersRepository = {
             accountData,
             emailConfirmation: emailData
         }
-        debugger
-
         // @ts-ignore
         return user
     },
 
     async insertToDbUnconfirmedEmail(newUserEmail: UsersEmailConfDataType): Promise<boolean> {
         const result = await usersEmailConfDataCollection.insertOne(newUserEmail)
+        return result.acknowledged  ;
+    },
+
+    async updateUnconfirmedEmailData(updatedEmailConfirmationData: UsersEmailConfDataType): Promise<boolean> {
+
+
+        const result = await usersEmailConfDataCollection.updateOne({email: updatedEmailConfirmationData.email}, {$set: {confirmationCode: updatedEmailConfirmationData.confirmationCode, expirationDate: updatedEmailConfirmationData.expirationDate}})
+
         return result.acknowledged  ;
     },
 

@@ -7,13 +7,13 @@ import add from 'date-fns/add'
 export const authService = {
 
     async checkCredentials(login: string, password: string) {
-    const user = await usersRepository.findUserByLogin(login)
-    if(!user) return false
-    if(user.password !== password) {
-        return false
-    }
-    return user
-},
+        const user = await usersRepository.findUserByLogin(login)
+        if (!user) return false
+        if (user.password !== password) {
+            return false
+        }
+        return user
+    },
 
     async userRegistration(login: string, email: string, password: string) {
         // Registration in DataBase
@@ -51,19 +51,38 @@ export const authService = {
     },
 
     async userRegConfirmation(confirmationCode: string): Promise<boolean> {
-        let user = await usersRepository.findUserByConfirmCode(confirmationCode)
-        debugger
-        if(!user) return false
-        if(user.accountData?.isConfirmed === true) return false
-        if(user.emailConfirmation?.confirmationCode !== confirmationCode) return false
-        // if(user.emailConfirmation.expirationDate < new Date()) return false
+        const user = await usersRepository.findUserByConfirmCode(confirmationCode)
+        if (!user) return false
+        if (user.accountData?.isConfirmed === true) return false
+        if (user.emailConfirmation?.confirmationCode !== confirmationCode) return false
+        if (user.emailConfirmation.expirationDate < new Date()) return false
 
-        let email = user.emailConfirmation.email
-
-        let result = await usersRepository.updateEmailConfirmation(email)
-
+        await usersRepository.updateEmailConfirmation(user.emailConfirmation.email)
 
         return true
-    }
+    },
 
+    async resendingEmailConfirm(email: string) {
+        const user = await usersRepository.findUserByEmail(email)
+        if (!user) return false
+        if (user.accountData?.isConfirmed === true) return false
+
+        const newEmailConfirmation = {
+            email,
+            confirmationCode: uuidv4(),
+            expirationDate: add(new Date(), {
+                hours: 3,
+                minutes: 3
+            }),
+            isConfirmed: false
+        }
+
+        await usersRepository.updateUnconfirmedEmailData(newEmailConfirmation)
+
+        await emailManager.sendEmailConfirmationCode(email, newEmailConfirmation.confirmationCode)
+
+        debugger
+        return true
+
+    }
 }
