@@ -65,8 +65,7 @@ export const authService = {
     async resendingEmailConfirm(email: string) {
         const user = await usersRepository.findUserByEmail(email)
         if (!user) return false
-        // @ts-ignore
-        if (user.accountData.isConfirmed === true) return false
+        if (user.accountData?.isConfirmed === true) return false
 
         const newEmailConfirmation = {
             email,
