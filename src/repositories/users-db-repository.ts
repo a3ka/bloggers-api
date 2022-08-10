@@ -65,7 +65,7 @@ export const usersRepository = {
 
         const emailData = await usersEmailConfDataCollection.findOne({email}, {projection: {_id: 0}})
 
-        const accountData = await usersCollection.findOne({email}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
+        const accountData = await usersCollection.findOne({email}, {projection: {_id: 0, password: 0, email: 0}})
 
         const user = {
             accountData,

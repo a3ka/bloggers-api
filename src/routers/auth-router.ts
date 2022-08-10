@@ -12,8 +12,8 @@ export const authRouter = Router({})
 authRouter.post('/login',
     fieldsValidationMiddleware.loginValidation,
     fieldsValidationMiddleware.passwordValidation,
-    checkLimitsIPAttemptsMiddleware,
     inputValidationMiddleware,
+    checkLimitsIPAttemptsMiddleware,
 
     async (req: Request, res: Response) => {
         const user = await authService.checkCredentials(req.body.login, req.body.password)
@@ -31,14 +31,22 @@ authRouter.post('/registration',
     fieldsValidationMiddleware.loginValidation,
     fieldsValidationMiddleware.emailValidation,
     fieldsValidationMiddleware.passwordValidation,
-    checkLimitsIPAttemptsMiddleware,
     inputValidationMiddleware,
+    checkLimitsIPAttemptsMiddleware,
 
     async (req: Request, res: Response) => {
-        const userRegistration = await authService.userRegistration(req.body.login, req.body.email, req.body.password)
 
-        res.status(204).send(userRegistration)
+        const isEmail = await usersRepository.findUserByEmail(req.body.email)
+        const isLogin = await usersRepository.findUserByLogin(req.body.login)
 
+        if(isEmail) {
+            res.status(400).send({ errorsMessages: [{ message: "ErrorMessage", field: "email" }] })
+        } else if(isLogin) {
+            res.status(400).send({ errorsMessages: [{ message: "ErrorMessage", field: "login" }] })
+        } else {
+            const userRegistration = await authService.userRegistration(req.body.login, req.body.email, req.body.password)
+            res.status(204).send(userRegistration)
+        }
     }
 )
 
@@ -59,17 +67,22 @@ authRouter.post('/registration-confirmation',
 
 authRouter.post('/registration-email-resending',
     fieldsValidationMiddleware.emailValidation,
-    checkLimitsIPAttemptsMiddleware,
     inputValidationMiddleware,
+    checkLimitsIPAttemptsMiddleware,
 
     async (req: Request, res: Response) => {
 
-        const result = await authService.resendingEmailConfirm(req.body.email)
+        const isEmail = await usersRepository.findUserByEmail(req.body.email)
 
-        if(result){
-            res.status(204).send()
+        if(isEmail.accountData?.isConfirmed === true) {
+            res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "email"}]})
         } else {
-            res.sendStatus(400)
+            const result = await authService.resendingEmailConfirm(req.body.email)
+            if(result){
+                res.sendStatus(204)
+            } else {
+                res.sendStatus(400)
+            }
         }
     }
 )
