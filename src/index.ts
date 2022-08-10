@@ -9,7 +9,6 @@ import {authRouter} from "./routers/auth-router";
 import {commentsRouter} from "./routers/comments-router";
 import { usersRouter } from './routers/users-router';
 import {testingRouter} from "./routers/testing-router";
-import {emilRouter} from "./routers/email-router";
 
 const app = express()
 app.use(cors())
@@ -25,7 +24,6 @@ app.use('/comments', commentsRouter)
 app.use('/users', usersRouter)
 app.use('/comments', commentsRouter)
 app.use('/testing', testingRouter)
-app.use('/email', emilRouter)
 
 const startApp = async () => {
     await runDb()

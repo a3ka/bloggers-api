@@ -71,7 +71,6 @@ export const usersRepository = {
             accountData,
             emailConfirmation: emailData
         }
-        debugger
         // @ts-ignore
         return user
     },
@@ -117,6 +116,13 @@ export const usersRepository = {
         }
 
         return await usersCollection.findOne({email}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
+    },
+
+    async deleteAllUsers(): Promise<boolean> {
+        const resultUser = await usersCollection.deleteMany({})
+        const resultUsEm = await usersEmailConfDataCollection.deleteMany({})
+
+        return true
     }
 
 

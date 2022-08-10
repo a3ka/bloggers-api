@@ -1,29 +1,26 @@
 import {Request, Response, Router} from "express";
-import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
-import {fieldsValidationMiddleware} from "../middlewares/fields-validation-middleware";
-import {usersService} from "../domain/users-service";
-import {jwtService} from "../application/jwt-service";
-import {authService} from "../domain/auth-service";
+import {postsRepository} from "../repositories/posts-db-repository";
+import {usersRepository} from "../repositories/users-db-repository";
+import {bloggersRepository} from "../repositories/bloggers-db-repository";
+import {commentsRepository} from "../repositories/comments-db-repository";
 
 
 
 export const testingRouter = Router({})
 
 testingRouter.delete('/all-data',
-    // fieldsValidationMiddleware.loginValidation,
-    // fieldsValidationMiddleware.passwordValidation,
-    // inputValidationMiddleware,
-
     async (req: Request, res: Response) => {
-        const user = await authService.checkCredentials(req.body.login, req.body.password)
 
-        if (!user) {
-            res.send(401)
-            return
-        }
+            const delAllPost = await postsRepository.deleteAllPost()
 
-        const token = await jwtService.createJWT(user)
-        res.status(200).send(token)
+            const delAllUsers = await usersRepository.deleteAllUsers()
+
+            const delAllBloggers = await bloggersRepository.deleteAllBloggers()
+            const delAllComments = await commentsRepository.deleteAllComments()
+
+            debugger
+
+        res.sendStatus(204)
     }
 )
 

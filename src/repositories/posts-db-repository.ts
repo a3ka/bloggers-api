@@ -41,6 +41,11 @@ export const postsRepository = {
     async deletePost (postId: string): Promise<boolean>  {
         const result = await postCollection.deleteOne({id: postId})
         return result.deletedCount === 1
+    },
+
+    async deleteAllPost(): Promise<boolean> {
+        const result = await postCollection.deleteMany({})
+        return true
     }
 
 
