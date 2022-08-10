@@ -1,0 +1,40 @@
+import {
+    AttemptType,
+    bloggersCollection,
+    BloggersExtendedType,
+    BloggersType, endpointsAttemptsTrysCollection,
+    postCollection,
+    PostsOfBloggerType,
+    PostType,
+    usersCollection,
+    usersEmailConfDataCollection,
+    UsersEmailConfDataType,
+    UsersExtendedType,
+    UsersType,
+    UsersWithPassType
+} from "./db";
+
+
+export const attemptsRepository = {
+
+    async getLastAttempts(ip: string, url: string, limitTime: Date): Promise<number | undefined | null> {
+
+        const countAttempts = await endpointsAttemptsTrysCollection.countDocuments({
+            userIP: ip,
+            url,
+            time: {$gt: limitTime}
+        })
+        return countAttempts
+    },
+
+    async addAttempt(userIP: string, url: string, time: Date):  Promise<AttemptType> {
+
+        const result = endpointsAttemptsTrysCollection.insertOne({ userIP, url, time})
+
+        // @ts-ignore
+        return result
+    }
+
+}
+
+

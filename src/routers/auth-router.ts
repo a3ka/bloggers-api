@@ -5,13 +5,15 @@ import {fieldsValidationMiddleware} from "../middlewares/fields-validation-middl
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {authService} from "../domain/auth-service";
 import {usersRepository} from "../repositories/users-db-repository";
+import {checkLimitsIPAttemptsMiddleware} from "../middlewares/checkLimitsIPAttempts-middleware";
 
 export const authRouter = Router({})
 
 authRouter.post('/login',
-    // fieldsValidationMiddleware.loginValidation,
-    // fieldsValidationMiddleware.passwordValidation,
-    // inputValidationMiddleware,
+    fieldsValidationMiddleware.loginValidation,
+    fieldsValidationMiddleware.passwordValidation,
+    checkLimitsIPAttemptsMiddleware,
+    inputValidationMiddleware,
 
     async (req: Request, res: Response) => {
         const user = await authService.checkCredentials(req.body.login, req.body.password)
@@ -29,6 +31,7 @@ authRouter.post('/registration',
     fieldsValidationMiddleware.loginValidation,
     fieldsValidationMiddleware.emailValidation,
     fieldsValidationMiddleware.passwordValidation,
+    checkLimitsIPAttemptsMiddleware,
     inputValidationMiddleware,
 
     async (req: Request, res: Response) => {
@@ -40,6 +43,7 @@ authRouter.post('/registration',
 )
 
 authRouter.post('/registration-confirmation',
+    checkLimitsIPAttemptsMiddleware,
 
     async (req: Request, res: Response) => {
         // @ts-ignore
@@ -55,6 +59,7 @@ authRouter.post('/registration-confirmation',
 
 authRouter.post('/registration-email-resending',
     fieldsValidationMiddleware.emailValidation,
+    checkLimitsIPAttemptsMiddleware,
     inputValidationMiddleware,
 
     async (req: Request, res: Response) => {

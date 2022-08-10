@@ -21,13 +21,13 @@ export const postsRepository = {
 
     async createPost (newPost: PostType): Promise<PostType | undefined> {
         const result = await postCollection.insertOne(newPost)
-        const post = await postCollection.find({id: newPost.id}, {projection: {_id: 0}}).toArray()
+        const post = await postCollection.find({id: newPost.id}, {projection: {_id: 0}})
         // @ts-ignore
-        return post[0]
+        return post
     },
 
     async getPostById (postId: string): Promise<PostType | null> {
-        
+
         const post  = await postCollection.findOne({id: postId}, {projection: {_id: 0}})
         return post;
     },

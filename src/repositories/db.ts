@@ -85,6 +85,11 @@ export type CommentsExtendedType = {
     items: [ CommentType | CommentType[] ]
 }
 
+export type AttemptType = {
+    userIP: string
+    url: string
+    time: Date
+}
 
 
 
@@ -99,6 +104,7 @@ export const postCollection = db.collection<PostType>("posts")
 export const usersCollection = db.collection<UsersType>("users")
 export const usersEmailConfDataCollection = db.collection<UsersEmailConfDataType>("usersEmailConfData")
 export const commentsCollection = db.collection<CommentType>("comments")
+export const endpointsAttemptsTrysCollection = db.collection<AttemptType>("attempts")
 
 
 export async function runDb() {
