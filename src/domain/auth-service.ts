@@ -81,6 +81,7 @@ export const authService = {
 
         await emailManager.sendEmailConfirmationCode(email, newEmailConfirmation.confirmationCode)
 
+        debugger
         return true
 
     }
