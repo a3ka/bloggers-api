@@ -44,8 +44,10 @@ export const usersRepository = {
         return user;
     },
 
-    async findUserByLogin(login: string): Promise<UsersWithPassType> {
+    async findUserByLogin(login: string): Promise<UsersWithPassType | boolean> {
         const user = await usersCollection.findOne({login: login}, {projection: {_id: 0, email: 0, isConfirmed: 0}})
+
+        if(user === null) return false
         // @ts-ignore
         return user
     },
@@ -71,8 +73,10 @@ export const usersRepository = {
             accountData,
             emailConfirmation: emailData
         }
-        // @ts-ignore
-        return user
+
+        if(accountData === null) return false
+
+        return accountData
     },
 
     async findUserByConfirmCode(confirmationCode: string) {

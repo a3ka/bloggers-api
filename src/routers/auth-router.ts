@@ -21,6 +21,7 @@ authRouter.post('/login',
             res.send(401)
             return
         }
+        // @ts-ignore
         const token = await jwtService.createJWT(user)
         res.status(200).send(token)
     }
@@ -37,16 +38,22 @@ authRouter.post('/registration',
 
         const isEmail = await usersRepository.findUserByEmail(req.body.email)
         const isLogin = await usersRepository.findUserByLogin(req.body.login)
+
+        debugger
+
         // @ts-ignore
-        if (isEmail.accountData) {
+        if (isEmail.email) {
             res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "email"}]})
-            return
-        }
-        if (isLogin) {
-            res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "login"}]})
-            return
+            return false
         }
 
+        debugger
+        // @ts-ignore
+        if (isLogin.login) {
+            res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "login"}]})
+            return false
+        }
+        debugger
         const userRegistration = await authService.userRegistration(req.body.login, req.body.email, req.body.password)
         res.status(204).send(userRegistration)
     }
@@ -76,7 +83,8 @@ authRouter.post('/registration-email-resending',
 
         const isEmail = await usersRepository.findUserByEmail(req.body.email)
 
-        if (isEmail.accountData?.isConfirmed === true) {
+        // @ts-ignore
+        if (isEmail?.isConfirmed === true) {
             res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "email"}]})
             return
         }
