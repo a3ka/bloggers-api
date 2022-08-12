@@ -40,13 +40,13 @@ authRouter.post('/registration',
         const isLogin = await usersRepository.findUserByLogin(req.body.login)
 
         // @ts-ignore
-        if (isEmail.email) {
+        if (!!isEmail && isEmail.email) {
             res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "email"}]})
             return false
         }
 
         // @ts-ignore
-        if (isLogin.login) {
+        if (isLogin && isLogin.login) {
             res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "login"}]})
             return false
         }
