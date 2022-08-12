@@ -65,18 +65,9 @@ export const usersRepository = {
 
     async findUserByEmail(email: string){
 
-        const emailData = await usersEmailConfDataCollection.findOne({email}, {projection: {_id: 0}})
+        const user = await usersCollection.findOne({email}, {projection: {_id: 0, password: 0}})
 
-        const accountData = await usersCollection.findOne({email}, {projection: {_id: 0, password: 0}})
-
-        const user = {
-            accountData,
-            emailConfirmation: emailData
-        }
-
-        if(accountData === null) return false
-
-        return accountData
+        return user
     },
 
     async findUserByConfirmCode(confirmationCode: string) {

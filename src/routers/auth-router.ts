@@ -66,7 +66,7 @@ authRouter.post('/registration-confirmation',
         if (result) {
             res.status(200).send()
         } else {
-            res.sendStatus(400)
+            res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "code"}]})
         }
     }
 )
@@ -78,10 +78,9 @@ authRouter.post('/registration-email-resending',
 
     async (req: Request, res: Response) => {
 
-        const isEmail = await usersRepository.findUserByEmail(req.body.email)
+        const email = await usersRepository.findUserByEmail(req.body.email)
 
-        // @ts-ignore
-        if (isEmail?.isConfirmed === true) {
+        if (!!email && email.isConfirmed === true) {
 
             res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "email"}]})
             return
