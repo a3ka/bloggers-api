@@ -110,14 +110,18 @@ export const usersRepository = {
 
     async updateEmailConfirmation(email: string): Promise<UsersType | null> {
 
+        debugger
         const accountDataRes = await usersCollection.updateOne({email}, {$set: {isConfirmed: true}})
 
-        if (accountDataRes) {
-            await usersEmailConfDataCollection.deleteOne({email})
+        if (!accountDataRes) {
             return null
+        } else {
+            await usersEmailConfDataCollection.deleteOne({email})
+            const result = await usersCollection.findOne({email}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
+
+            return result
         }
 
-        return await usersCollection.findOne({email}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
     },
 
     async deleteAllUsers(): Promise<boolean> {
