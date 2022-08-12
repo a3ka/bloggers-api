@@ -84,12 +84,19 @@ export const usersRepository = {
 
         const accountData = await usersCollection.findOne({email: emailData?.email}, {projection: {_id: 0}})
 
-        const user = {
-            accountData,
-            emailConfirmation: emailData
+        if(emailData === null && accountData === null) {
+            const user = {
+                accountData: undefined,
+                emailConfirmation: undefined
+            }
+            return user
+        } else {
+            const user = {
+                accountData,
+                emailConfirmation: emailData
+            }
+            return user
         }
-        // @ts-ignore
-        return user
     },
 
     async insertToDbUnconfirmedEmail(newUserEmail: UsersEmailConfDataType): Promise<boolean> {

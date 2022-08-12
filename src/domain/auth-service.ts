@@ -53,14 +53,22 @@ export const authService = {
 
     async userRegConfirmation(confirmationCode: string): Promise<boolean> {
         const user = await usersRepository.findUserByConfirmCode(confirmationCode)
-        if (!user) return false
-        if (user.accountData?.isConfirmed === true) return false
-        if (user.emailConfirmation?.confirmationCode !== confirmationCode) return false
-        if (user.emailConfirmation?.expirationDate < new Date()) return false
+        debugger
+        // if (!user.emailConfirmation) return false
+        // if (user.accountData?.isConfirmed === true) return false
+        // if (user.emailConfirmation?.confirmationCode !== confirmationCode) return false
+        // if (user.emailConfirmation?.expirationDate < new Date()) return false
+        // debugger
 
-        await usersRepository.updateEmailConfirmation(user.emailConfirmation.email!)
+        if (!!user.emailConfirmation && user.emailConfirmation.expirationDate > new Date()) {
 
-        return true
+            await usersRepository.updateEmailConfirmation(user.emailConfirmation.email)
+
+            debugger
+            return true
+        } else {
+            return false
+        }
     },
 
     async resendingEmailConfirm(email: string) {

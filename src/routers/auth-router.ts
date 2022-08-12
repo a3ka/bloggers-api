@@ -61,7 +61,7 @@ authRouter.post('/registration-confirmation',
 
     async (req: Request, res: Response) => {
         // @ts-ignore
-        const result = await authService.userRegConfirmation(req.query.confirmationCode)
+        const result = await authService.userRegConfirmation(req.query.code)
 
         if (result) {
             res.status(200).send()

@@ -6,7 +6,7 @@ const LIMIT_OF_ATTEMPTS = 10 * 1000
 export const checkLimitsIPAttemptsMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
     const ip = req.ip
-    // console.log(ip)
+    console.log(ip)
     const url = req.url
     const currentTime: Date = new Date()
     const limitTime: Date = new Date(currentTime.getTime() - LIMIT_OF_ATTEMPTS)
