@@ -17,6 +17,9 @@ app.use(bodyParser())
 // const port = process.env.PORT || 5000
 const port = process.env.PORT
 
+app.set("trust proxy", true) // fix ip
+// X-Forwardet-For
+
 app.use('/bloggers', bloggersRouter)
 app.use('/posts', postsRouter)
 app.use('/auth', authRouter)

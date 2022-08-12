@@ -8,7 +8,7 @@ export const emailManager = {
 
     async sendEmailConfirmationCode(email: string, confirmationCode: string) {
 
-        await emailAdapter.sendEmail(email, "Confirm your Email", ` <div> Confirm your Email: <a href='http://localhost:5000/auth/registration-confirmation?confirmationCode=${confirmationCode}'>Click here</a> </div>`)
+        await emailAdapter.sendEmail(email, "Confirm your Email", ` <div> Confirm your Email: <a href='http://localhost:5000/auth/registration-confirmation?code=${confirmationCode}'>Click here</a> </div>`)
     }
 }
 
