@@ -21,9 +21,8 @@ export const postsRepository = {
 
     async createPost (newPost: PostType): Promise<PostType | undefined> {
         const result = await postCollection.insertOne(newPost)
-        const post = await postCollection.find({id: newPost.id}, {projection: {_id: 0}})
-        // @ts-ignore
-        return post
+        
+        return newPost
     },
 
     async getPostById (postId: string): Promise<PostType | null> {
