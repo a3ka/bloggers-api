@@ -110,7 +110,6 @@ export const usersRepository = {
 
     async updateEmailConfirmation(email: string): Promise<UsersType | null> {
 
-        debugger
         const accountDataRes = await usersCollection.updateOne({email}, {$set: {isConfirmed: true}})
 
         if (!accountDataRes) {

@@ -61,9 +61,7 @@ authRouter.post('/registration-confirmation',
 
     async (req: Request, res: Response) => {
         // @ts-ignore
-        const result = await authService.userRegConfirmation(req.query.code)
-
-        debugger
+        const result = await authService.userRegConfirmation(req.body.code)
 
         if (result) {
             res.status(204).send()
@@ -81,9 +79,9 @@ authRouter.post('/registration-email-resending',
     async (req: Request, res: Response) => {
 
 
-        const email = await usersRepository.findUserByEmail(req.body.email)
+        const user = await usersRepository.findUserByEmail(req.body.email)
 
-        if (!!email && email.isConfirmed === true || !email) {
+        if (user?.isConfirmed === true || !user) {
 
             res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "email"}]})
         } else {

@@ -59,8 +59,6 @@ export const authService = {
         // if (user.emailConfirmation?.expirationDate < new Date()) return false
 
 
-        debugger
-
         if (!!user.emailConfirmation && user.emailConfirmation.isConfirmed === false) {
 
             const result = await usersRepository.updateEmailConfirmation(user.emailConfirmation.email)
@@ -78,6 +76,8 @@ export const authService = {
         const user = await usersRepository.findUserByEmail(email)
         if (!user) return false
         if (user?.isConfirmed === true) return false
+
+
 
         const newEmailConfirmation = {
             email,
