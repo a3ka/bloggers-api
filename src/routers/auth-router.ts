@@ -22,8 +22,43 @@ authRouter.post('/login',
             return
         }
         // @ts-ignore
-        const token = await jwtService.createJWT(user)
-        res.status(200).send(token)
+        const jwtTokenPair = await jwtService.createJWTPair(user)
+
+        res.cookie('refreshToken', jwtTokenPair.refreshToken, {
+            httpOnly: true,
+            // secure: true
+            // secure: process.env.NODE_ENV === "production",
+        })
+
+        res.status(200).send(jwtTokenPair.accessToken)
+    }
+)
+
+authRouter.post('/refresh-token', async (req: Request, res: Response) => {
+
+
+        const refreshToken = req.cookies.refreshToken
+
+        if (refreshToken) {
+            const user = {id: ""}
+            user.id = await jwtService.getUserIdByToken(refreshToken)
+
+            const jwtTokenPair = await jwtService.createJWTPair(user)
+
+            res.cookie('refreshToken', jwtTokenPair.refreshToken, {
+                httpOnly: true,
+                // secure: true
+                // secure: process.env.NODE_ENV === "production",
+            })
+
+            res.status(200).send(jwtTokenPair.accessToken)
+
+        } else {
+            res.sendStatus(401)
+        }
+
+
+
     }
 )
 

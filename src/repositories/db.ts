@@ -44,9 +44,9 @@ export type UsersType = {
 
 export type UsersWithPassType = {
     id: string
-    login: string
-    password: string
-    isConfirmed: boolean
+    login?: string
+    password?: string
+    isConfirmed?: boolean
 }
 
 export type UsersExtendedType = {

@@ -1,14 +1,21 @@
 import {UsersWithPassType} from "../repositories/db";
 import jwt from 'jsonwebtoken'
-import {ObjectId} from 'mongodb'
-
 
 export const jwtService = {
 
-    async createJWT(user: UsersWithPassType) {
+    async createJWTPair(user: UsersWithPassType) {
         // @ts-ignore
-        const token = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {expiresIn: '24h'})
-        return {token: token}
+        const accessToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
+            expiresIn: 10
+        })
+
+        const refreshToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
+            expiresIn: 20
+        })
+
+        const jwtTokenPair = {accessToken, refreshToken}
+
+        return jwtTokenPair
     },
 
     async getUserIdByToken (token: string) {

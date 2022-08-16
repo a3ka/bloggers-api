@@ -13,7 +13,7 @@ testingRouter.delete('/all-data',
         await usersRepository.deleteAllUsers()
         await bloggersRepository.deleteAllBloggers()
         await commentsRepository.deleteAllComments()
-        
+
         res.sendStatus(204)
     }
 )
