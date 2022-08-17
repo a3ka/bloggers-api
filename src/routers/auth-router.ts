@@ -24,6 +24,7 @@ authRouter.post('/login',
         // @ts-ignore
         const jwtTokenPair = await jwtService.createJWTPair(user)
 
+
         res.cookie('refreshToken', jwtTokenPair.refreshToken, {
             httpOnly: true,
             // secure: true
@@ -38,6 +39,9 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
 
         const refreshToken = req.cookies.refreshToken
+        const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
+
+        if (isRefreshTokenInBlackList) return false
 
         if (refreshToken) {
             const user = {id: ""}
@@ -51,12 +55,13 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
                 // secure: process.env.NODE_ENV === "production",
             })
 
+            await authService.addRefreshTokenToBlackList(refreshToken)
+
             res.status(200).send(jwtTokenPair.accessToken)
 
         } else {
             res.sendStatus(401)
         }
-
 
 
     }

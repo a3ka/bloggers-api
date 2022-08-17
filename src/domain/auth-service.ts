@@ -2,6 +2,7 @@ import {usersRepository} from "../repositories/users-db-repository";
 import {emailManager} from "../managers/email-manager";
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
+import {refreshTokensBLRepository} from "../repositories/refreshTokekensBL-db-repository";
 
 
 export const authService = {
@@ -92,8 +93,15 @@ export const authService = {
         await usersRepository.updateUnconfirmedEmailData(newEmailConfirmation)
 
         await emailManager.sendEmailConfirmationCode(email, newEmailConfirmation.confirmationCode)
-
         return true
+    },
 
+    async addRefreshTokenToBlackList(refreshToken: string) {
+        return refreshTokensBLRepository.addRefreshTokenToBlackList(refreshToken)
+    },
+
+    async checkTokenInBlackList(refreshToken: string) {
+        return refreshTokensBLRepository.checkTokenInBlackList(refreshToken)
     }
+
 }

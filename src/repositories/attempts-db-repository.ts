@@ -1,17 +1,6 @@
 import {
     AttemptType,
-    bloggersCollection,
-    BloggersExtendedType,
-    BloggersType, endpointsAttemptsTrysCollection,
-    postCollection,
-    PostsOfBloggerType,
-    PostType,
-    usersCollection,
-    usersEmailConfDataCollection,
-    UsersEmailConfDataType,
-    UsersExtendedType,
-    UsersType,
-    UsersWithPassType
+    endpointsAttemptsTrysCollection,
 } from "./db";
 
 

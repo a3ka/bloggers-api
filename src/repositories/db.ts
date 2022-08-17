@@ -91,6 +91,10 @@ export type AttemptType = {
     time: Date
 }
 
+export type RefreshTokensCollectionType = {
+    refreshToken: string
+}
+
 
 
 const mongoUri = process.env.MongoURI || "mongodb+srv://alexk:123qweasd@cluster0.lapbhyv.mongodb.net/?retryWrites=true&w=majority"
@@ -105,6 +109,7 @@ export const usersCollection = db.collection<UsersType>("users")
 export const usersEmailConfDataCollection = db.collection<UsersEmailConfDataType>("usersEmailConfData")
 export const commentsCollection = db.collection<CommentType>("comments")
 export const endpointsAttemptsTrysCollection = db.collection<AttemptType>("attempts")
+export const refreshTokensBlackListCollection = db.collection<RefreshTokensCollectionType>("refreshTokensBL")
 
 
 export async function runDb() {
