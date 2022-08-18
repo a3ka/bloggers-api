@@ -97,7 +97,10 @@ export const authService = {
     },
 
     async addRefreshTokenToBlackList(refreshToken: string) {
-        return refreshTokensBLRepository.addRefreshTokenToBlackList(refreshToken)
+        debugger
+        const result =  await refreshTokensBLRepository.addRefreshTokenToBlackList(refreshToken)
+
+        return result
     },
 
     async checkTokenInBlackList(refreshToken: string) {

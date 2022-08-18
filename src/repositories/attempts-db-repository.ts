@@ -1,6 +1,6 @@
 import {
     AttemptType,
-    endpointsAttemptsTrysCollection,
+    endpointsAttemptsTrysCollection, postCollection,
 } from "./db";
 
 
@@ -22,6 +22,11 @@ export const attemptsRepository = {
 
         // @ts-ignore
         return result
+    },
+
+    async deleteAllAttempts(): Promise<boolean> {
+        const result = await endpointsAttemptsTrysCollection.deleteMany({})
+        return true
     }
 
 }

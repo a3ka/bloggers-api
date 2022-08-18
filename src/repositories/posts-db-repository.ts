@@ -1,4 +1,4 @@
-import {bloggersCollection, BloggersType, client, postCollection, PostsOfBloggerType, PostType} from "./db";
+import {postCollection, PostsOfBloggerType, PostType} from "./db";
 
 
 export const postsRepository = {
@@ -21,7 +21,7 @@ export const postsRepository = {
 
     async createPost (newPost: PostType): Promise<PostType | undefined> {
         const result = await postCollection.insertOne(newPost)
-        
+
         return newPost
     },
 
