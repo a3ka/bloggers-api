@@ -3,6 +3,7 @@ import {emailManager} from "../managers/email-manager";
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
 import {refreshTokensBLRepository} from "../repositories/refreshTokekensBL-db-repository";
+import {UsersType, UsersWithEmailType} from "../repositories/db";
 
 
 export const authService = {
@@ -105,6 +106,11 @@ export const authService = {
 
     async checkTokenInBlackList(refreshToken: string) {
         return refreshTokensBLRepository.checkTokenInBlackList(refreshToken)
+    },
+
+    async findUserById(userId: string): Promise<UsersWithEmailType | undefined | null> {
+        const user = await usersRepository.findUserWithEmailById(userId)
+        return user
     }
 
 }

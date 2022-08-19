@@ -49,6 +49,12 @@ export type UsersWithPassType = {
     isConfirmed?: boolean
 }
 
+export type UsersWithEmailType = {
+    email: string
+    login: string
+    userId: string
+}
+
 export type UsersExtendedType = {
     pagesCount: number
     page: number

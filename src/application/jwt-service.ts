@@ -20,9 +20,7 @@ export const jwtService = {
 
     async getUserIdByToken (token: string) {
         try {
-            // @ts-ignore
             const result: any = jwt.verify(token, process.env.JWT_SECRET || '123')
-            // return new ObjectId(result.userId)
             return result.userId
         } catch (error) {
             return null

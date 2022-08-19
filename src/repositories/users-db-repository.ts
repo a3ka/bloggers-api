@@ -9,7 +9,7 @@ import {
     usersEmailConfDataCollection,
     UsersEmailConfDataType,
     UsersExtendedType,
-    UsersType,
+    UsersType, UsersWithEmailType,
     UsersWithPassType
 } from "./db";
 
@@ -60,6 +60,12 @@ export const usersRepository = {
 
     async findUserById(userId: string): Promise<UsersType> {
         const user = await usersCollection.findOne({id: userId}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
+        // @ts-ignore
+        return user
+    },
+
+    async findUserWithEmailById(userId: string): Promise<UsersWithEmailType> {
+        const user = await usersCollection.findOne({id: userId}, {projection: {_id: 0, password: 0, isConfirmed: 0}})
         // @ts-ignore
         return user
     },

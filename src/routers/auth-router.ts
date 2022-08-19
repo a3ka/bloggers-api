@@ -5,6 +5,7 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {authService} from "../domain/auth-service";
 import {usersRepository} from "../repositories/users-db-repository";
 import {checkLimitsIPAttemptsMiddleware} from "../middlewares/checkLimitsIPAttempts-middleware";
+import {authBearerMiddleware} from "../middlewares/auth-bearer-middleware";
 
 export const authRouter = Router({})
 
@@ -37,7 +38,6 @@ authRouter.post('/login',
 
 authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
-
         const refreshToken = await req.cookies?.refreshToken
 
         const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
@@ -58,13 +58,46 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
             await authService.addRefreshTokenToBlackList(refreshToken)
 
-            res.status(200).send(jwtTokenPair.accessToken)
+            // res.status(200).send(jwtTokenPair.accessToken)
+            res.status(200).send("New RefreshToken was sent")
 
         } else {
             res.sendStatus(401)
         }
+    }
+)
 
+authRouter.post('/logout', async (req: Request, res: Response) => {
 
+        const refreshToken = await req.cookies?.refreshToken
+        const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
+        if (isRefreshTokenInBlackList) return false
+
+        if (refreshToken) {
+            await authService.addRefreshTokenToBlackList(refreshToken)
+            res.sendStatus(204)
+
+        } else {
+            res.sendStatus(401)
+        }
+    }
+)
+
+authRouter.get('/me',
+    authBearerMiddleware,
+    async (req: Request, res: Response) => {
+
+        const header = req.headers.authorization
+
+        const token = header!.split(' ')[1]
+
+        const userId = await jwtService.getUserIdByToken(token)
+        const user = await authService.findUserById(userId)
+        if(user) {
+            res.status(200).send(user)
+        } else {
+            res.send(401)
+        }
     }
 )
 
