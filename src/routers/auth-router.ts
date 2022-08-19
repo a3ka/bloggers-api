@@ -27,8 +27,8 @@ authRouter.post('/login',
 
 
         res.cookie('refreshToken', jwtTokenPair.refreshToken, {
-            // httpOnly: true,
-            // secure: true
+            httpOnly: true,
+            secure: true
             // secure: process.env.NODE_ENV === "production",
         })
 
