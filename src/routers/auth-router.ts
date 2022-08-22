@@ -96,7 +96,7 @@ authRouter.get('/me',
         if(user) {
             res.status(200).send(user)
         } else {
-            res.send(401)
+            res.sendStatus(401)
         }
     }
 )
