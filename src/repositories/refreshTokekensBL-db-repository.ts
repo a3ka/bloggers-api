@@ -5,7 +5,6 @@ export const refreshTokensBLRepository = {
     async addRefreshTokenToBlackList(token: string) {
         // @ts-ignore
         const result = await refreshTokensBlackListCollection.insertOne({refreshToken: token})
-        debugger
         return result
     },
 

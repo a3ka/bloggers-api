@@ -10,7 +10,7 @@ export const jwtService = {
         })
 
         const refreshToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
-            expiresIn: 20 
+            expiresIn: 20
         })
 
         const jwtTokenPair = {accessToken, refreshToken}
@@ -26,12 +26,15 @@ export const jwtService = {
         // } catch (error) {
         //     return null
         // }
-
-        const result: any = jwt.verify(token, process.env.JWT_SECRET || '123')
-        debugger
-        if(result) {
-            return result.userId
-        } else {
+        try{
+            const result: any = await jwt.verify(token, process.env.JWT_SECRET || '123')
+            if(result) {
+                return result.userId
+            } else {
+                return false
+            }
+        }
+        catch (error){
             return false
         }
     }
