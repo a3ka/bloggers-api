@@ -32,7 +32,7 @@ authRouter.post('/login',
             // secure: process.env.NODE_ENV === "production",
         })
 
-        res.status(200).send(jwtTokenPair.accessToken)
+        res.status(200).send({accessToken: jwtTokenPair.accessToken})
     }
 )
 
@@ -42,17 +42,18 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
         const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
 
-        if (isRefreshTokenInBlackList) return false
+        if (isRefreshTokenInBlackList) res.sendStatus(401)
 
         if (refreshToken) {
             const user = {id: ""}
             user.id = await jwtService.getUserIdByToken(refreshToken)
 
-            const jwtTokenPair = await jwtService.createJWTPair(user)
+            if (user.id === null) res.sendStatus(401)
 
+            const jwtTokenPair = await jwtService.createJWTPair(user)
             res.cookie('refreshToken', jwtTokenPair.refreshToken, {
-                // httpOnly: true,
-                // secure: true
+                httpOnly: true,
+                secure: true
                 // secure: process.env.NODE_ENV === "production",
             })
 
@@ -71,7 +72,7 @@ authRouter.post('/logout', async (req: Request, res: Response) => {
 
         const refreshToken = await req.cookies?.refreshToken
         const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
-        if (isRefreshTokenInBlackList) return false
+        if (isRefreshTokenInBlackList) res.sendStatus(401)
 
         if (refreshToken) {
             await authService.addRefreshTokenToBlackList(refreshToken)
@@ -88,11 +89,10 @@ authRouter.get('/me',
     async (req: Request, res: Response) => {
 
         const header = req.headers.authorization
-
         const token = header!.split(' ')[1]
-
         const userId = await jwtService.getUserIdByToken(token)
         const user = await authService.findUserById(userId)
+
         if(user) {
             res.status(200).send(user)
         } else {
