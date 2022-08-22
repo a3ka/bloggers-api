@@ -39,32 +39,27 @@ authRouter.post('/login',
 authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
         const refreshToken = await req.cookies?.refreshToken
+        if (!refreshToken) res.sendStatus(401)
 
         const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
-
         if (isRefreshTokenInBlackList) res.sendStatus(401)
 
-        if (refreshToken) {
-            const user = {id: ""}
-            user.id = await jwtService.getUserIdByToken(refreshToken)
+        const user = {id: ""}
+        user.id = await jwtService.getUserIdByToken(refreshToken)
 
-            if (user.id === null) res.sendStatus(401)
+        if (user.id === null) res.sendStatus(401)
 
-            const jwtTokenPair = await jwtService.createJWTPair(user)
-            res.cookie('refreshToken', jwtTokenPair.refreshToken, {
-                httpOnly: true,
-                secure: true
-                // secure: process.env.NODE_ENV === "production",
-            })
+        const jwtTokenPair = await jwtService.createJWTPair(user)
+        res.cookie('refreshToken', jwtTokenPair.refreshToken, {
+            httpOnly: true,
+            secure: true
+            // secure: process.env.NODE_ENV === "production",
+        })
 
-            await authService.addRefreshTokenToBlackList(refreshToken)
+        await authService.addRefreshTokenToBlackList(refreshToken)
 
-            res.status(200).send(jwtTokenPair.accessToken)
-            // res.status(200).send("New RefreshToken was sent")
-
-        } else {
-            res.sendStatus(401)
-        }
+        res.status(200).send(jwtTokenPair.accessToken)
+        // res.status(200).send("New RefreshToken was sent")
     }
 )
 
