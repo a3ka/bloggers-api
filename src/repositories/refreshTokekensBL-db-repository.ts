@@ -11,8 +11,11 @@ export const refreshTokensBLRepository = {
 
     async checkTokenInBlackList(refreshToken: string) {
         const result  = await refreshTokensBlackListCollection.findOne({refreshToken}, {projection: {_id: 0}})
-
-        return result;
+        if(result === null) {
+            return false
+        } else {
+            return result
+        }
     },
 
     async deleteAllTokensInBlackList(): Promise<boolean> {

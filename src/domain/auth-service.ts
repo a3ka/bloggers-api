@@ -98,14 +98,14 @@ export const authService = {
     },
 
     async addRefreshTokenToBlackList(refreshToken: string) {
-        debugger
         const result =  await refreshTokensBLRepository.addRefreshTokenToBlackList(refreshToken)
 
         return result
     },
 
     async checkTokenInBlackList(refreshToken: string) {
-        return refreshTokensBLRepository.checkTokenInBlackList(refreshToken)
+        const result = await refreshTokensBLRepository.checkTokenInBlackList(refreshToken)
+        return result
     },
 
     async findUserById(userId: string): Promise<UsersWithEmailType | undefined | null> {

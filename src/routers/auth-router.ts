@@ -46,7 +46,7 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
         const user = {id: ""}
         user.id = await jwtService.getUserIdByToken(refreshToken)
-
+        debugger
         if (user.id === null) res.sendStatus(401)
 
         const jwtTokenPair = await jwtService.createJWTPair(user)
