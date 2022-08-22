@@ -59,8 +59,8 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
             await authService.addRefreshTokenToBlackList(refreshToken)
 
-            // res.status(200).send(jwtTokenPair.accessToken)
-            res.status(200).send("New RefreshToken was sent")
+            res.status(200).send(jwtTokenPair.accessToken)
+            // res.status(200).send("New RefreshToken was sent")
 
         } else {
             res.sendStatus(401)
@@ -71,6 +71,8 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 authRouter.post('/logout', async (req: Request, res: Response) => {
 
         const refreshToken = await req.cookies?.refreshToken
+        if (!refreshToken) res.sendStatus(401)
+
         const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
         if (isRefreshTokenInBlackList) res.sendStatus(401)
 
@@ -93,7 +95,7 @@ authRouter.get('/me',
         const userId = await jwtService.getUserIdByToken(token)
         const user = await authService.findUserById(userId)
 
-        if(user) {
+        if (user) {
             res.status(200).send(user)
         } else {
             res.sendStatus(401)
@@ -116,13 +118,11 @@ authRouter.post('/registration',
         // @ts-ignore
         if (!!isEmail && isEmail.email) {
             res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "email"}]})
-            return false
         }
 
         // @ts-ignore
         if (isLogin && isLogin.login) {
             res.status(400).send({errorsMessages: [{message: "ErrorMessage", field: "login"}]})
-            return false
         }
 
         const userRegistration = await authService.userRegistration(req.body.login, req.body.email, req.body.password)
