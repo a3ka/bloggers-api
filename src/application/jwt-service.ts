@@ -6,11 +6,11 @@ export const jwtService = {
     async createJWTPair(user: UsersWithPassType) {
         // @ts-ignore
         const accessToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
-            expiresIn: 10
+            expiresIn: 100
         })
 
         const refreshToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
-            expiresIn: 20
+            expiresIn: 200
         })
 
         const jwtTokenPair = {accessToken, refreshToken}
@@ -19,13 +19,7 @@ export const jwtService = {
     },
 
     async getUserIdByToken(token: string) {
-        // try {
-        //     const result: any = jwt.verify(token, process.env.JWT_SECRET || '123')
-        //     debugger
-        //     return result.userId
-        // } catch (error) {
-        //     return null
-        // }
+
         try{
             const result: any = await jwt.verify(token, process.env.JWT_SECRET || '123')
             if(result) {
@@ -37,5 +31,29 @@ export const jwtService = {
         catch (error){
             return false
         }
+    },
+
+    async getTokenExpTime(token: string) {
+
+        debugger
+
+        try{
+            const result: any = await jwt.verify(token, process.env.JWT_SECRET || '123')
+            if(result) {
+                return result.exp
+            } else {
+                return false
+            }
+        }
+        catch (error){
+            return false
+        }
+
+        // const result: any = await jwt.verify(token, process.env.JWT_SECRET || '123')
+        // if(result) {
+        //     return result.exp
+        // } else {
+        //     return false
+        // }
     }
 }

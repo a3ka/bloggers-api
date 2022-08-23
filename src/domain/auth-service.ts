@@ -3,7 +3,7 @@ import {emailManager} from "../managers/email-manager";
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
 import {refreshTokensBLRepository} from "../repositories/refreshTokekensBL-db-repository";
-import {UsersType, UsersWithEmailType} from "../repositories/db";
+import {UsersWithEmailType} from "../repositories/db";
 
 
 export const authService = {
