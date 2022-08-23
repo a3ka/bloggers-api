@@ -74,6 +74,9 @@ authRouter.post('/logout', async (req: Request, res: Response) => {
         const refreshToken = await req.cookies?.refreshToken
         if (!refreshToken) return res.sendStatus(401)
 
+        let tokenExpTime = await jwtService.getTokenExpTime(refreshToken)
+        if (!tokenExpTime) return res.sendStatus(401)
+
         const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
         if (isRefreshTokenInBlackList) return res.sendStatus(401)
 
@@ -89,7 +92,7 @@ authRouter.get('/me',
 
         debugger
         const header = req.headers.authorization
-        if(!header) return res.sendStatus(401)
+        if (!header) return res.sendStatus(401)
 
         const token = header!.split(' ')[1]
         const userId = await jwtService.getUserIdByToken(token)
