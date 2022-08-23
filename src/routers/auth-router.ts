@@ -64,7 +64,7 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
         await authService.addRefreshTokenToBlackList(refreshToken)
 
-        res.status(200).send(jwtTokenPair.accessToken)
+        res.status(200).send({accessToken: jwtTokenPair.accessToken})
         // res.status(200).send("New RefreshToken was sent")
     }
 )
