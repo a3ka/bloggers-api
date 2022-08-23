@@ -65,7 +65,7 @@ export const usersRepository = {
     },
 
     async findUserWithEmailById(userId: string): Promise<UsersWithEmailType> {
-        const user = await usersCollection.findOne({id: userId}, {projection: {_id: 0, password: 0, isConfirmed: 0}})
+        const user = await usersCollection.findOne({userId: userId}, {projection: {_id: 0, password: 0, isConfirmed: 0}})
         // @ts-ignore
         return user
     },
