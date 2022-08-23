@@ -52,7 +52,8 @@ export type UsersWithPassType = {
 export type UsersWithEmailType = {
     email: string
     login: string
-    userId: string
+    userId?: string
+    id?: string
 }
 
 export type UsersExtendedType = {

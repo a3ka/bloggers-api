@@ -111,8 +111,9 @@ export const authService = {
     async findUserById(userId: string): Promise<UsersWithEmailType | undefined | null> {
         const user = await usersRepository.findUserWithEmailById(userId)
 
-        // @ts-ignore
-        delete Object.assign(user, {[userId]: user[id] })[id];
+        user['id'] = user['userId'];
+        delete user['userId'];
+
         return user
     }
 
