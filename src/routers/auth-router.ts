@@ -38,6 +38,7 @@ authRouter.post('/login',
 
 authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
+
         const refreshToken = await req.cookies?.refreshToken
         if (!refreshToken) return res.sendStatus(401)
 
@@ -46,6 +47,8 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
         if (!tokenExpTime) return res.sendStatus(401)
 
         const isRefreshTokenInBlackList = await authService.checkTokenInBlackList(refreshToken)
+
+
         if (isRefreshTokenInBlackList) return res.sendStatus(401)
 
         const user = {id: ""}
