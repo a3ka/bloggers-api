@@ -86,6 +86,8 @@ authRouter.get('/me',
 
         debugger
         const header = req.headers.authorization
+        if(!header) return res.sendStatus(401)
+        
         const token = header!.split(' ')[1]
         const userId = await jwtService.getUserIdByToken(token)
         const user = await authService.findUserById(userId)
