@@ -4,6 +4,8 @@ import {usersService} from "../domain/users-service";
 
 export const authBearerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
+    debugger
+
     const header = req.headers.authorization
     if (!header) {
         res.send(401)
@@ -19,4 +21,5 @@ export const authBearerMiddleware = async (req: Request, res: Response, next: Ne
         res.send(401)
     }
 }
+
 

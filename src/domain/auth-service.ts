@@ -111,10 +111,16 @@ export const authService = {
     async findUserById(userId: string): Promise<UsersWithEmailType | undefined | null> {
         const user = await usersRepository.findUserWithEmailById(userId)
 
-        user['userId'] = user['id'];
-        delete user['id'];
+        // user['userId'] = user['id'];
+        // delete user['id'];
 
-        console.log(user)
+        const nUser = {
+            email: user.email,
+            login: user.login,
+            userId: user.id
+        }
+
+        console.log(nUser)
 
         return user
     }
