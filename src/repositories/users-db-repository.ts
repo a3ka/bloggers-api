@@ -39,7 +39,7 @@ export const usersRepository = {
     async createUser(newUser: UsersWithPassType): Promise<UsersType> {
         // @ts-ignore
         const result = await usersCollection.insertOne(newUser)
-        const user = await usersCollection.findOne({id: newUser.id}, {projection: {_id: 0, password: 0, isConfirmed: 0}})
+        const user = await usersCollection.findOne({id: newUser.id}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
 
         // @ts-ignore
         return user;
