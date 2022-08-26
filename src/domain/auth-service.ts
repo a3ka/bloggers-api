@@ -114,15 +114,15 @@ export const authService = {
         user['userId'] = user['id'];
         delete user['id'];
 
-        // const nUser = {
-        //     email: user.email,
-        //     login: user.login,
-        //     userId: user.userId
-        // }
+        const nUser = {
+            email: user.email,
+            login: user.login,
+            userId: user.userId
+        }
 
         console.log(user)
 
-        return user
+        return nUser
     }
 
 }
