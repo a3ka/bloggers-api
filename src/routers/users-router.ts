@@ -24,7 +24,7 @@ usersRouter.post('/',
     fieldsValidationMiddleware.passwordValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const newUser = await usersService.createUser(req.body.login, req.body.password)
+        const newUser = await usersService.createUser(req.body.login, req.body.password, req.body.email)
         res.status(201).send(newUser)
     }
 )

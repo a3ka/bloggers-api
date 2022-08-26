@@ -40,6 +40,7 @@ export type UsersType = {
     id: string
     login: string
     isConfirmed: boolean
+    email?: string
 }
 
 export type UsersWithPassType = {

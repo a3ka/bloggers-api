@@ -25,11 +25,12 @@ export const usersService = {
         return users
     },
 
-    async createUser(login: string, password: string): Promise<UsersType> {
+    async createUser(login: string, password: string, email: string): Promise<UsersType> {
 
         const newUser = {
             id: (+(new Date())).toString(),
             login,
+            email,
             password,
             isConfirmed: false
         }

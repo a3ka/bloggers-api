@@ -120,8 +120,6 @@ export const authService = {
             userId: user.userId
         }
 
-        console.log(user)
-
         return nUser
     }
 
