@@ -1,5 +1,5 @@
 import {
-    bloggersCollection,
+    // bloggersCollection,
     BloggersType,
     client, CommentContentType, commentsCollection, CommentsExtendedType,
     CommentType,

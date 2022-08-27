@@ -1,10 +1,4 @@
 import {
-    bloggersCollection,
-    BloggersExtendedType,
-    BloggersType,
-    postCollection,
-    PostsOfBloggerType,
-    PostType,
     usersCollection,
     usersEmailConfDataCollection,
     UsersEmailConfDataType,

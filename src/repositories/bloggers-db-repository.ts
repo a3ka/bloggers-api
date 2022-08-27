@@ -48,7 +48,7 @@ export const bloggersRepository = {
     },
 
     async createBlogger(newBlogger: BloggersType): Promise<BloggersType> {
-        await bloggersCollection.insertOne(newBlogger)
+        await bloggersCollection.insertMany([newBlogger])
         const blogger = await bloggersCollection.findOne({id: newBlogger.id}, {projection: {_id: 0}})
 
         // @ts-ignore
