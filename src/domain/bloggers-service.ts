@@ -1,15 +1,23 @@
-import {bloggersRepository} from "../repositories/bloggers-db-repository";
+import {BloggersRepository} from "../repositories/bloggers-db-repository";
 import {BloggersExtendedType, BloggersType, PostsOfBloggerType} from "../repositories/db";
-import {postsRepository} from "../repositories/posts-db-repository";
+import {PostsRepository} from "../repositories/posts-db-repository";
 
 class BloggersService {
+    private bloggersRepository: BloggersRepository;
+    private postsRepository: PostsRepository;
+
+    constructor() {
+        this.bloggersRepository = new BloggersRepository()
+        this.postsRepository = new PostsRepository()
+    }
+
     async getAllBloggers(
         pageNumber: string = '1',
         pageSize :string = '10',
         searchNameTerm: string | null = null
     ): Promise<BloggersExtendedType | undefined | null> {
 
-        return bloggersRepository.getAllBloggers(+pageNumber, +pageSize, searchNameTerm)
+        return this.bloggersRepository.getAllBloggers(+pageNumber, +pageSize, searchNameTerm)
     }
 
     async createBlogger(name: string, youtubeUrl: string): Promise<BloggersType> {
@@ -18,33 +26,33 @@ class BloggersService {
             name,
             youtubeUrl
         }
-        const createdBloggerDb = await bloggersRepository.createBlogger(newBlogger)
+        const createdBloggerDb = await this.bloggersRepository.createBlogger(newBlogger)
         // const createdBlogger = omit_Id(createdBloggerDb)
         return createdBloggerDb;
     }
 
     async getBloggerById(bloggerId: string): Promise<BloggersType | null> {
-        const bloggerDb = await bloggersRepository.getBloggerById(bloggerId);
+        const bloggerDb = await this.bloggersRepository.getBloggerById(bloggerId);
         // const blogger = omit_Id(bloggerDb)
         return bloggerDb
     }
 
     async updateBlogger(bloggerId: string, name: string, youtubeUrl: string): Promise<boolean> {
-        return await bloggersRepository.updateBlogger(bloggerId, name, youtubeUrl)
+        return await this.bloggersRepository.updateBlogger(bloggerId, name, youtubeUrl)
     }
 
     async deleteBlogger(bloggerId: string): Promise<boolean> {
-        return bloggersRepository.deleteBlogger(bloggerId)
+        return this.bloggersRepository.deleteBlogger(bloggerId)
     }
 
     async getPostsByBloggerId(bloggerId: string, pageNumber: string = '1' || undefined || null, pageSize: string = '10' || undefined || null): Promise<PostsOfBloggerType | null> {
-        const postsDb = await bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize);
+        const postsDb = await this.bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize);
         // const posts = omit_Id(postsDb)
         return postsDb
     }
 
     async createPostByBloggerId (bloggerId: string, title: string, shortDescription: string, content: string) {
-        const blogger = await bloggersRepository.getBloggerById(bloggerId)
+        const blogger = await this.bloggersRepository.getBloggerById(bloggerId)
         if (blogger) {
             const newPost = {
                 id: (+(new Date())).toString(),
@@ -54,7 +62,7 @@ class BloggersService {
                 bloggerId,
                 bloggerName: blogger.name
             }
-            const createdPostDb = await postsRepository.createPost(newPost)
+            const createdPostDb = await this.postsRepository.createPost(newPost)
             // const createdPost = omit_Id(createdPostDb)
             return createdPostDb
         }

@@ -1,6 +1,6 @@
 import {PostsModel, PostsOfBloggerType, PostType} from "./db";
 
-class PostsRepository {
+export class PostsRepository {
     async getAllPosts (pageNumber: number, pageSize:number): Promise<PostsOfBloggerType | undefined | null> {
 
         const postsCount = await PostsModel.count({})
@@ -39,8 +39,9 @@ class PostsRepository {
     }
 
     async deleteAllPost(): Promise<boolean> {
-        const result = await PostsModel.deleteMany({})
+        await PostsModel.deleteMany({})
         return true
     }
 }
+
 export const postsRepository = new PostsRepository()

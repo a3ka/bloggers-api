@@ -7,7 +7,7 @@ import {
     PostType
 } from "./db";
 
-class BloggersRepository {
+export class BloggersRepository {
     async getAllBloggers(pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<BloggersExtendedType | undefined | null> {
 
         if (searchNameTerm) {

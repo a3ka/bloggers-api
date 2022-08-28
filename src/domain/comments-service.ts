@@ -1,26 +1,32 @@
 
-import {postsRepository} from "../repositories/posts-db-repository";
+import {PostsRepository} from "../repositories/posts-db-repository";
 import {
     CommentContentType,
     CommentsExtendedType,
     CommentType,
 } from "../repositories/db";
-import {commentsRepository} from "../repositories/comments-db-repository";
+import {CommentsRepository} from "../repositories/comments-db-repository";
 
 class CommentsService {
+    private commentsRepository: any;
+    private postsRepository: PostsRepository;
+    constructor() {
+        this.commentsRepository = new CommentsRepository()
+        this.postsRepository = new PostsRepository()
+    }
     async getAllCommentsByPostId (postId: string, pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<CommentsExtendedType | undefined | null> {
-        const posts = await commentsRepository.getAllCommentsToPost(postId, +pageNumber, +pageSize)
+        const posts = await this.commentsRepository.getAllCommentsToPost(postId, +pageNumber, +pageSize)
         return posts
     }
 
     async findComment (commentId: string): Promise<CommentType | undefined | null> {
-        const comment = await commentsRepository.findComment(commentId)
+        const comment = await this.commentsRepository.findComment(commentId)
         return comment
     }
 
     async createCommentByPostId (user:any, postId: string, content:string): Promise<CommentType | undefined> {
 
-        const post = await postsRepository.getPostById(postId)
+        const post = await this.postsRepository.getPostById(postId)
         if (post) {
 
             const newComment = {
@@ -32,17 +38,17 @@ class CommentsService {
                 addedAt: new Date
             }
 
-            const createdComment = await commentsRepository.createComment(newComment)
+            const createdComment = await this.commentsRepository.createComment(newComment)
             return createdComment
         }
     }
 
     async updateComment (commentId: string, content: string): Promise<CommentContentType>  {
-        return commentsRepository.updateComment(commentId, content)
+        return this.commentsRepository.updateComment(commentId, content)
     }
 
     async deleteComment (commentId: string): Promise<boolean>  {
-        return commentsRepository.deleteComment(commentId)
+        return this.commentsRepository.deleteComment(commentId)
     }
 }
 

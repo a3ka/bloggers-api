@@ -7,7 +7,7 @@ import {
     UsersWithPassType
 } from "./db";
 
-class UsersRepository {
+export class UsersRepository {
     async getAllUsers(pageNumber: number, pageSize: number): Promise<UsersExtendedType | undefined | null> {
 
         debugger
@@ -135,5 +135,4 @@ class UsersRepository {
 }
 
 export const usersRepository = new UsersRepository()
-
 

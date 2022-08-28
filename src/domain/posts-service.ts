@@ -1,13 +1,20 @@
 
-import {bloggersRepository} from "../repositories/bloggers-db-repository";
-import {postsRepository} from "../repositories/posts-db-repository";
+import {BloggersRepository} from "../repositories/bloggers-db-repository";
+import {PostsRepository} from "../repositories/posts-db-repository";
 import {PostType} from "../repositories/db";
 
 
 class PostsService {
+    private postsRepository: PostsRepository;
+    private bloggersRepository: BloggersRepository;
+    constructor() {
+        this.postsRepository = new PostsRepository()
+        this.bloggersRepository = new BloggersRepository()
+    }
+
     async getAllPosts (pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<{}> {
 
-        const postsDb = await postsRepository.getAllPosts(+pageNumber, +pageSize)
+        const postsDb = await this.postsRepository.getAllPosts(+pageNumber, +pageSize)
         // @ts-ignore
         const posts = {...postsDb}
 
@@ -20,7 +27,7 @@ class PostsService {
     }
 
     async createPost (title: string, shortDescription: string, content: string, bloggerId: string): Promise<PostType | undefined> {
-        const blogger = await bloggersRepository.getBloggerById(bloggerId)
+        const blogger = await this.bloggersRepository.getBloggerById(bloggerId)
         if (blogger) {
             const newPost = {
                 id: (+(new Date())).toString(),
@@ -30,21 +37,21 @@ class PostsService {
                 bloggerId,
                 bloggerName: blogger.name
             }
-            const createdPost = await postsRepository.createPost(newPost)
+            const createdPost = await this.postsRepository.createPost(newPost)
             return createdPost
         }
     }
 
     async getPostById (postId: string): Promise<PostType | null> {
-        return postsRepository.getPostById(postId)
+        return this.postsRepository.getPostById(postId)
     }
 
     async updatePost (postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean>  {
-        return postsRepository.updatePost(postId, title, shortDescription, content, bloggerId)
+        return this.postsRepository.updatePost(postId, title, shortDescription, content, bloggerId)
     }
 
     async deletePost (postId: string): Promise<boolean>  {
-        return postsRepository.deletePost(postId)
+        return this.postsRepository.deletePost(postId)
     }
 }
 

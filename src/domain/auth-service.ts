@@ -1,4 +1,4 @@
-import {usersRepository} from "../repositories/users-db-repository";
+import {UsersRepository} from "../repositories/users-db-repository";
 import {emailManager} from "../managers/email-manager";
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add'
@@ -6,8 +6,12 @@ import {refreshTokensBLRepository} from "../repositories/refreshTokekensBL-db-re
 import {UsersWithEmailType} from "../repositories/db";
 
 class AuthService {
+    private usersRepository: UsersRepository;
+    constructor() {
+        this.usersRepository = new UsersRepository()
+    }
     async checkCredentials(login: string, password: string) {
-        const user = await usersRepository.findUserByLogin(login)
+        const user = await this.usersRepository.findUserByLogin(login)
         debugger
         if (!user) return false
         // @ts-ignore
@@ -38,8 +42,8 @@ class AuthService {
             }
         }
 
-        await usersRepository.createUser(newUser.accountData)
-        await usersRepository.insertToDbUnconfirmedEmail(newUser.emailConfirmation)
+        await this.usersRepository.createUser(newUser.accountData)
+        await this.usersRepository.insertToDbUnconfirmedEmail(newUser.emailConfirmation)
 
         debugger
 
@@ -47,24 +51,19 @@ class AuthService {
             await emailManager.sendEmailConfirmationCode(email, newUser.emailConfirmation.confirmationCode)
         } catch (err) {
             console.error(err)
-            usersRepository.deleteUser(newUser.accountData.id)
-            usersRepository.deleteUserUnconfirmedEmail(newUser.emailConfirmation.email)
+            this.usersRepository.deleteUser(newUser.accountData.id)
+            this.usersRepository.deleteUserUnconfirmedEmail(newUser.emailConfirmation.email)
             return null
         }
         return true
     }
 
     async userRegConfirmation(confirmationCode: string): Promise<boolean> {
-        const user = await usersRepository.findUserByConfirmCode(confirmationCode)
-        // if (!user.emailConfirmation) return false
-        // if (user.accountData?.isConfirmed === true) return false
-        // if (user.emailConfirmation?.confirmationCode !== confirmationCode) return false
-        // if (user.emailConfirmation?.expirationDate < new Date()) return false
-
+        const user = await this.usersRepository.findUserByConfirmCode(confirmationCode)
 
         if (!!user.emailConfirmation && user.emailConfirmation.isConfirmed === false) {
 
-            const result = await usersRepository.updateEmailConfirmation(user.emailConfirmation.email)
+            const result = await this.usersRepository.updateEmailConfirmation(user.emailConfirmation.email)
 
             if(result) {
                 emailManager.sendEmailConfirmation(user.emailConfirmation.email)
@@ -76,7 +75,7 @@ class AuthService {
     }
 
     async resendingEmailConfirm(email: string) {
-        const user = await usersRepository.findUserByEmail(email)
+        const user = await this.usersRepository.findUserByEmail(email)
         if (!user) return false
         if (user?.isConfirmed === true) return false
 
@@ -92,7 +91,7 @@ class AuthService {
             isConfirmed: false
         }
 
-        await usersRepository.updateUnconfirmedEmailData(newEmailConfirmation)
+        await this.usersRepository.updateUnconfirmedEmailData(newEmailConfirmation)
 
         await emailManager.sendEmailConfirmationCode(email, newEmailConfirmation.confirmationCode)
         return true
@@ -110,7 +109,7 @@ class AuthService {
     }
 
     async findUserById(userId: string): Promise<UsersWithEmailType | undefined | null> {
-        const user = await usersRepository.findUserWithEmailById(userId)
+        const user = await this.usersRepository.findUserWithEmailById(userId)
 
         user['userId'] = user['id'];
         delete user['id'];

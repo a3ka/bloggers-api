@@ -3,7 +3,7 @@ import {
     CommentType
 } from "./db";
 
-class CommentsRepository {
+export class CommentsRepository {
     async getAllCommentsToPost (postId: string, pageNumber: number, pageSize:number): Promise<CommentsExtendedType | undefined | null> {
 
         const commentsCount = await CommentsModel.count({postId})
