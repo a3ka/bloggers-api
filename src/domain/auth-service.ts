@@ -5,9 +5,7 @@ import add from 'date-fns/add'
 import {refreshTokensBLRepository} from "../repositories/refreshTokekensBL-db-repository";
 import {UsersWithEmailType} from "../repositories/db";
 
-
-export const authService = {
-
+class AuthService {
     async checkCredentials(login: string, password: string) {
         const user = await usersRepository.findUserByLogin(login)
         debugger
@@ -17,7 +15,7 @@ export const authService = {
             return false
         }
         return user
-    },
+    }
 
     async userRegistration(login: string, email: string, password: string) {
         // Registration in DataBase
@@ -54,7 +52,7 @@ export const authService = {
             return null
         }
         return true
-    },
+    }
 
     async userRegConfirmation(confirmationCode: string): Promise<boolean> {
         const user = await usersRepository.findUserByConfirmCode(confirmationCode)
@@ -75,7 +73,7 @@ export const authService = {
         } else {
             return false
         }
-    },
+    }
 
     async resendingEmailConfirm(email: string) {
         const user = await usersRepository.findUserByEmail(email)
@@ -98,18 +96,18 @@ export const authService = {
 
         await emailManager.sendEmailConfirmationCode(email, newEmailConfirmation.confirmationCode)
         return true
-    },
+    }
 
     async addRefreshTokenToBlackList(refreshToken: string) {
         const result =  await refreshTokensBLRepository.addRefreshTokenToBlackList(refreshToken)
 
         return result
-    },
+    }
 
     async checkTokenInBlackList(refreshToken: string) {
         const result = await refreshTokensBLRepository.checkTokenInBlackList(refreshToken)
         return result
-    },
+    }
 
     async findUserById(userId: string): Promise<UsersWithEmailType | undefined | null> {
         const user = await usersRepository.findUserWithEmailById(userId)
@@ -122,8 +120,8 @@ export const authService = {
             login: user.login,
             userId: user.userId
         }
-
         return nUser
     }
-
 }
+
+export const authService = new AuthService()

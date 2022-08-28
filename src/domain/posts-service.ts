@@ -1,11 +1,10 @@
 
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
 import {postsRepository} from "../repositories/posts-db-repository";
-import {BloggersExtendedType, PostsOfBloggerType, PostType} from "../repositories/db";
+import {PostType} from "../repositories/db";
 
 
-
-export const postsService = {
+class PostsService {
     async getAllPosts (pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<{}> {
 
         const postsDb = await postsRepository.getAllPosts(+pageNumber, +pageSize)
@@ -17,10 +16,8 @@ export const postsService = {
             // @ts-ignore
             delete posts.items[i]._id
         }
-
         return posts
-
-    },
+    }
 
     async createPost (title: string, shortDescription: string, content: string, bloggerId: string): Promise<PostType | undefined> {
         const blogger = await bloggersRepository.getBloggerById(bloggerId)
@@ -33,22 +30,22 @@ export const postsService = {
                 bloggerId,
                 bloggerName: blogger.name
             }
-
             const createdPost = await postsRepository.createPost(newPost)
             return createdPost
         }
-    },
+    }
 
     async getPostById (postId: string): Promise<PostType | null> {
-
         return postsRepository.getPostById(postId)
-    },
+    }
 
     async updatePost (postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean>  {
         return postsRepository.updatePost(postId, title, shortDescription, content, bloggerId)
-    },
+    }
 
     async deletePost (postId: string): Promise<boolean>  {
         return postsRepository.deletePost(postId)
     }
 }
+
+export const postsService = new PostsService()

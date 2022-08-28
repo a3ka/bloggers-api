@@ -3,8 +3,7 @@ import {
     CommentType
 } from "./db";
 
-
-export const commentsRepository = {
+class CommentsRepository {
     async getAllCommentsToPost (postId: string, pageNumber: number, pageSize:number): Promise<CommentsExtendedType | undefined | null> {
 
         const commentsCount = await CommentsModel.count({postId})
@@ -21,20 +20,20 @@ export const commentsRepository = {
 
         // @ts-ignore
         return result
-    },
+    }
 
     async findComment (commentId: string): Promise<CommentType | undefined | null> {
         const comment = await CommentsModel.findOne({id: commentId}, {_id: 0, postId: 0, __v: 0})
         // @ts-ignore
         return comment
-    },
+    }
 
     async createComment (newComment: CommentType): Promise<CommentType | undefined> {
         await CommentsModel.insertMany([newComment])
         const comment = await CommentsModel.findOne({id: newComment.id}, {_id: 0, postId: 0, __v: 0})
         // @ts-ignore
         return comment
-    },
+    }
 
 
     async updateComment (commentId: string, content: string): Promise<CommentContentType>  {
@@ -45,16 +44,17 @@ export const commentsRepository = {
         // @ts-ignore
         return updatedComment
 
-    },
+    }
 
     async deleteComment (commentId: string): Promise<boolean>  {
         const result = await CommentsModel.deleteOne({id: commentId})
         return result.deletedCount === 1
-    },
+    }
 
     async deleteAllComments(): Promise<boolean> {
         await CommentsModel.deleteMany({})
         return true
     }
-
 }
+
+export const commentsRepository = new CommentsRepository()
