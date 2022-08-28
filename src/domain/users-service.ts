@@ -21,6 +21,7 @@ function omit_Id(obj:any) {
 export const usersService = {
 
     async getAllUsers(pageNumber: string = '1' || undefined, pageSize:string = '10' || undefined): Promise<UsersExtendedType | undefined | null> {
+        debugger
         const users = await usersRepository.getAllUsers(+pageNumber, +pageSize)
         return users
     },

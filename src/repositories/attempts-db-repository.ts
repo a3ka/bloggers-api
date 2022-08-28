@@ -1,6 +1,6 @@
 import {
     AttemptType,
-    endpointsAttemptsTrysCollection, postCollection,
+    endpointsAttemptsTrysCollection,
 } from "./db";
 
 

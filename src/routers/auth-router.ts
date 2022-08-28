@@ -17,7 +17,7 @@ authRouter.post('/login',
 
     async (req: Request, res: Response) => {
         const user = await authService.checkCredentials(req.body.login, req.body.password)
-
+        debugger
         if (!user) {
             res.send(401)
             return
@@ -27,8 +27,8 @@ authRouter.post('/login',
 
 
         res.cookie('refreshToken', jwtTokenPair.refreshToken, {
-            httpOnly: true,
-            secure: true
+            // httpOnly: true,
+            // secure: true
         })
 
         res.status(200).send({accessToken: jwtTokenPair.accessToken})
@@ -56,8 +56,8 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
 
         const jwtTokenPair = await jwtService.createJWTPair(user)
         res.cookie('refreshToken', jwtTokenPair.refreshToken, {
-            httpOnly: true,
-            secure: true
+            // httpOnly: true,
+            // secure: true
             // secure: process.env.NODE_ENV === "production",
         })
 

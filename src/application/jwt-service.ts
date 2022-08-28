@@ -6,11 +6,11 @@ export const jwtService = {
     async createJWTPair(user: UsersWithPassType) {
         // @ts-ignore
         const accessToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
-            expiresIn: 10
+            expiresIn: 100
         })
 
         const refreshToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
-            expiresIn: 20
+            expiresIn: 200
         })
 
         const jwtTokenPair = {accessToken, refreshToken}
@@ -35,7 +35,6 @@ export const jwtService = {
 
     async getTokenExpTime(token: string) {
 
-        debugger
 
         try{
             const result: any = await jwt.verify(token, process.env.JWT_SECRET || '123')

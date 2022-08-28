@@ -1,8 +1,8 @@
 import {
-    bloggersCollection,
+    BloggersModel,
     BloggersExtendedType,
     BloggersType,
-    postCollection,
+    PostsModel,
     PostsOfBloggerType,
     PostType
 } from "./db";
@@ -14,9 +14,9 @@ export const bloggersRepository = {
 
 
         if (searchNameTerm) {
-            const bloggers = await bloggersCollection.find({name: {$regex: searchNameTerm}}, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+            const bloggers = await BloggersModel.find({name: {$regex: searchNameTerm}}, {_id: 0, __v: 0}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
 
-            const bloggersCount = await bloggersCollection.count({name: {$regex: searchNameTerm}})
+            const bloggersCount = await BloggersModel.count({name: {$regex: searchNameTerm}})
             const pagesCount = Math.ceil(bloggersCount / pageSize)
 
             const result = {
@@ -30,9 +30,11 @@ export const bloggersRepository = {
             return result
         } else {
 
-            const bloggers = await bloggersCollection.find({}, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+            // const bloggers = await BloggersModel.find({}, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
 
-            const bloggersCount = await bloggersCollection.count({})
+            const bloggers = await BloggersModel.find({}, {_id: 0, __v: 0}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
+
+            const bloggersCount = await BloggersModel.count({})
             const pagesCount = Math.ceil(bloggersCount / pageSize)
 
             const result = {
@@ -48,33 +50,33 @@ export const bloggersRepository = {
     },
 
     async createBlogger(newBlogger: BloggersType): Promise<BloggersType> {
-        await bloggersCollection.insertMany([newBlogger])
-        const blogger = await bloggersCollection.findOne({id: newBlogger.id}, {projection: {_id: 0}})
+        await BloggersModel.insertMany([newBlogger])
+        const blogger = await BloggersModel.findOne({id: newBlogger.id}, {_id: 0, __v: 0})
 
         // @ts-ignore
         return blogger;
     },
 
     async getBloggerById(bloggerId: string): Promise<BloggersType | null> {
-        const blogger: BloggersType | null = await bloggersCollection.findOne({id: bloggerId}, {projection: {_id: 0}})
+        const blogger: BloggersType | null = await BloggersModel.findOne({id: bloggerId}, {p_id: 0, __v: 0})
         return blogger;
     },
 
     async updateBlogger(bloggerId: string, name: string, youtubeUrl: string): Promise<boolean> {
-        const result = await bloggersCollection.updateOne({id: bloggerId}, {$set: {name: name, youtubeUrl: youtubeUrl}})
+        const result = await BloggersModel.updateOne({id: bloggerId}, {$set: {name: name, youtubeUrl: youtubeUrl}})
         return result.matchedCount === 1
     },
 
     async deleteBlogger(bloggerId: string): Promise<boolean> {
-        const result = await bloggersCollection.deleteOne({id: bloggerId})
+        const result = await BloggersModel.deleteOne({id: bloggerId})
         return result.deletedCount === 1
     },
 
     async getPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<PostsOfBloggerType | null> {
 
-        const postsCount = await postCollection.count({bloggerId})
+        const postsCount = await PostsModel.count({bloggerId})
         const pagesCount = Math.ceil(postsCount / pageSize)
-        const posts: PostType[] | PostType = await postCollection.find({bloggerId}, {projection: {_id: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+        const posts: PostType[] | PostType = await PostsModel.find({bloggerId}, {_id: 0, __v: 0}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
 
         const result = {
             pagesCount: pagesCount,
@@ -86,16 +88,15 @@ export const bloggersRepository = {
 
         // @ts-ignore
         return result
-
     },
 
     async isBlogger(bloggerId: string):Promise<boolean> {
-        const blogger: BloggersType | null = await bloggersCollection.findOne({id: bloggerId}, {projection: {_id: 0}})
+        const blogger: BloggersType | null = await BloggersModel.findOne({id: bloggerId}, {_id: 0, __v: 0})
         return !!blogger;
     },
 
     async deleteAllBloggers(): Promise<boolean> {
-        const result = await bloggersCollection.deleteMany({})
+        const result = await BloggersModel.deleteMany({})
         return true
     }
 }

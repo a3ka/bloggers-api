@@ -1,6 +1,7 @@
 import {
+    UsersModel,
     usersCollection,
-    usersEmailConfDataCollection,
+    usersEmailConfDataModel,
     UsersEmailConfDataType,
     UsersExtendedType,
     UsersType, UsersWithEmailType,
@@ -12,10 +13,11 @@ export const usersRepository = {
 
     async getAllUsers(pageNumber: number, pageSize: number): Promise<UsersExtendedType | undefined | null> {
 
+        debugger
         // @ts-ignore
-        const users = await usersCollection.find({}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}}).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+        const users = await UsersModel.find({}, {_id: 0, password: 0, email: 0, isConfirmed: 0, __v: 0}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
 
-        const bloggersCount = await usersCollection.count({})
+        const bloggersCount = await UsersModel.count({})
         const pagesCount = Math.ceil(bloggersCount / pageSize)
 
         const result = {
@@ -31,16 +33,19 @@ export const usersRepository = {
     },
 
     async createUser(newUser: UsersWithPassType): Promise<UsersType> {
+        debugger
         // @ts-ignore
-        const result = await usersCollection.insertOne(newUser)
-        const user = await usersCollection.findOne({id: newUser.id}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
+        await UsersModel.insertMany([newUser])
+        // await usersCollection.insertOne(newUser)
+        const user = await UsersModel.findOne({id: newUser.id}, {_id: 0, password: 0, email: 0, isConfirmed: 0, __v: 0})
 
         // @ts-ignore
         return user;
     },
 
     async findUserByLogin(login: string): Promise<UsersWithPassType | boolean> {
-        const user = await usersCollection.findOne({login: login}, {projection: {_id: 0, email: 0, isConfirmed: 0}})
+        debugger
+        const user = await UsersModel.findOne({login: login}, {_id: 0, email: 0, isConfirmed: 0, __v: 0})
 
         if(user === null) return false
         // @ts-ignore
@@ -48,33 +53,33 @@ export const usersRepository = {
     },
 
     async deleteUser(id: string): Promise<boolean> {
-        const result = await usersCollection.deleteOne({id: id})
+        const result = await UsersModel.deleteOne({id: id})
         return result.deletedCount === 1
     },
 
     async findUserById(userId: string): Promise<UsersType> {
-        const user = await usersCollection.findOne({id: userId}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
+        const user = await UsersModel.findOne({id: userId}, {_id: 0, password: 0, email: 0, isConfirmed: 0, __v: 0})
         // @ts-ignore
         return user
     },
 
     async findUserWithEmailById(userId: string): Promise<UsersWithEmailType> {
-        const user = await usersCollection.findOne({id: userId}, {projection: {_id: 0, password: 0, isConfirmed: 0}})
+        const user = await UsersModel.findOne({id: userId}, {_id: 0, password: 0, isConfirmed: 0, __v: 0})
         // @ts-ignore
         return user
     },
 
     async findUserByEmail(email: string){
 
-        const user = await usersCollection.findOne({email}, {projection: {_id: 0, password: 0}})
+        const user = await UsersModel.findOne({email}, {_id: 0, password: 0})
 
         return user
     },
 
     async findUserByConfirmCode(confirmationCode: string) {
-        const emailData = await usersEmailConfDataCollection.findOne({confirmationCode: confirmationCode}, {projection: {_id: 0}})
+        const emailData = await usersEmailConfDataModel.findOne({confirmationCode: confirmationCode}, {projection: {_id: 0}})
 
-        const accountData = await usersCollection.findOne({email: emailData?.email}, {projection: {_id: 0}})
+        const accountData = await UsersModel.findOne({email: emailData?.email}, {projection: {_id: 0}})
 
         if(emailData === null && accountData === null) {
             const user = {
@@ -92,42 +97,43 @@ export const usersRepository = {
     },
 
     async insertToDbUnconfirmedEmail(newUserEmail: UsersEmailConfDataType): Promise<boolean> {
-        const result = await usersEmailConfDataCollection.insertOne(newUserEmail)
-        return result.acknowledged  ;
+        const result = await usersEmailConfDataModel.insertMany([newUserEmail])
+        // return result.acknowledged  ;
+        if(result){
+            return true
+        } else {
+            return false
+        }
     },
 
     async updateUnconfirmedEmailData(updatedEmailConfirmationData: UsersEmailConfDataType): Promise<boolean> {
 
-
-        const result = await usersEmailConfDataCollection.updateOne({email: updatedEmailConfirmationData.email}, {$set: {confirmationCode: updatedEmailConfirmationData.confirmationCode, expirationDate: updatedEmailConfirmationData.expirationDate}})
+        const result = await usersEmailConfDataModel.updateOne({email: updatedEmailConfirmationData.email}, {$set: {confirmationCode: updatedEmailConfirmationData.confirmationCode, expirationDate: updatedEmailConfirmationData.expirationDate}})
 
         return result.acknowledged  ;
     },
 
     async deleteUserUnconfirmedEmail(email: string): Promise<boolean> {
-        const result = await usersEmailConfDataCollection.deleteOne({email})
+        const result = await usersEmailConfDataModel.deleteOne({email})
         return result.deletedCount === 1
     },
 
     async updateEmailConfirmation(email: string): Promise<UsersType | null> {
 
-        const accountDataRes = await usersCollection.updateOne({email}, {$set: {isConfirmed: true}})
+        const accountDataRes = await UsersModel.updateOne({email}, {$set: {isConfirmed: true}})
 
         if (!accountDataRes) {
             return null
         } else {
-            await usersEmailConfDataCollection.deleteOne({email})
-            const result = await usersCollection.findOne({email}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
-
+            await usersEmailConfDataModel.deleteOne({email})
+            const result = await UsersModel.findOne({email}, {projection: {_id: 0, password: 0, email: 0, isConfirmed: 0}})
             return result
         }
-
     },
 
     async deleteAllUsers(): Promise<boolean> {
-        const resultUser = await usersCollection.deleteMany({})
-        const resultUsEm = await usersEmailConfDataCollection.deleteMany({})
-
+        await UsersModel.deleteMany({})
+        await usersEmailConfDataModel.deleteMany({})
         return true
     }
 

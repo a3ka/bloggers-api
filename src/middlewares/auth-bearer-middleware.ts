@@ -4,7 +4,6 @@ import {usersService} from "../domain/users-service";
 
 export const authBearerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 
-    debugger
 
     const header = req.headers.authorization
     if (!header) {

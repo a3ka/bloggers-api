@@ -43,9 +43,10 @@ export type PostsOfBloggerType = {
 
 export type UsersType = {
     id: string
-    login: string
-    isConfirmed: boolean
+    login?: string
+    isConfirmed?: boolean
     email?: string
+    password?: string
 }
 
 export type UsersWithPassType = {
@@ -110,7 +111,10 @@ export type RefreshTokensCollectionType = {
 
 
 
-const mongoUri = process.env.MongoURI || "mongodb+srv://alexk:123qweasd@cluster0.lapbhyv.mongodb.net/?retryWrites=true&w=majority"
+// const mongoUri = process.env.MongoURI || "mongodb+srv://alexk:123qweasd@cluster0.lapbhyv.mongodb.net/?retryWrites=true&w=majority"
+
+const mongoUri = "mongodb+srv://alexk:123qweasd@cluster0.lapbhyv.mongodb.net"
+
 const dbName = "socialNetwork"
 
 export const client = new MongoClient(mongoUri)
@@ -122,16 +126,57 @@ const bloggersSchema = new mongoose.Schema<BloggersType>({
     youtubeUrl: String
 })
 
+const postsSchema = new mongoose.Schema<PostType>({
+    id: String,
+    title: String,
+    shortDescription: String,
+    content: String,
+    bloggerId: String,
+    bloggerName: String,
+})
+
+const usersSchema = new mongoose.Schema<UsersType>({
+    id: String,
+    login: String,
+    password: String,
+    isConfirmed: Boolean,
+    email: String
+})
 
 
-export const bloggersCollection = db.collection<BloggersType>("bloggers")
-// export const BloggersModel = mongoose.model("bloggers", bloggersSchema)
+const usersEmailConfDataSchema = new mongoose.Schema<UsersEmailConfDataType> ({
+    email: String,
+    confirmationCode: String,
+    expirationDate: Date,
+    isConfirmed: Boolean
+})
+
+const commentsSchema = new mongoose.Schema<CommentType> ({
+    postId: String,
+    id: String,
+    content: String,
+    userId: String,
+    userLogin: String,
+    addedAt: Object
+})
 
 
-export const postCollection = db.collection<PostType>("posts")
+
+// export const bloggersCollection = db.collection<BloggersType>("bloggers")
+export const BloggersModel = mongoose.model("bloggers", bloggersSchema)
+
+// export const postCollection = db.collection<PostType>("posts")
+export const PostsModel = mongoose.model("posts", postsSchema)
+
 export const usersCollection = db.collection<UsersType>("users")
-export const usersEmailConfDataCollection = db.collection<UsersEmailConfDataType>("usersEmailConfData")
-export const commentsCollection = db.collection<CommentType>("comments")
+export const UsersModel = mongoose.model("users", usersSchema)
+
+// export const usersEmailConfDataCollection = db.collection<UsersEmailConfDataType>("usersEmailConfData")
+export const usersEmailConfDataModel = mongoose.model("usersEmailConfData", usersEmailConfDataSchema)
+
+// export const commentsCollection = db.collection<CommentType>("comments")
+export const CommentsModel = mongoose.model("comments", commentsSchema)
+
 export const endpointsAttemptsTrysCollection = db.collection<AttemptType>("attempts")
 export const refreshTokensBlackListCollection = db.collection<RefreshTokensCollectionType>("refreshTokensBL")
 
@@ -141,7 +186,7 @@ export async function runDb() {
         // Connect the client to the server
         await client.connect();
         // // Establish and verify connection
-        await client.db("socialNetwork").command({ping: 1});
+        // await client.db("socialNetwork").command({ping: 1});
 
 
         await mongoose.connect(mongoUri + "/" + dbName);
