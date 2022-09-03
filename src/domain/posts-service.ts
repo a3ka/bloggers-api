@@ -50,8 +50,22 @@ class PostsService {
         }
     }
 
-    async getPostById (postId: string): Promise<PostType | null> {
-        return this.postsRepository.getPostById(postId)
+    async getPostById (postId: string, userId?: string) {
+
+        if(!userId) {
+            const post = await this.postsRepository.getPostById(postId)
+            // @ts-ignore
+            post!.extendedLikesInfo.myStatus = "None"
+            return post
+        } else {
+            debugger
+            // @ts-ignore
+            const [likesStatus, post] = await this.postsRepository.getPostById(postId, userId)
+
+            post!.extendedLikesInfo.myStatus = likesStatus.likeStatus
+            debugger
+            return post
+        }
     }
 
     async updatePost (postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean>  {

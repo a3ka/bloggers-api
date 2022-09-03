@@ -9,6 +9,7 @@ import {commentsService} from "../domain/comments-service";
 import {CommentType} from "../repositories/db";
 import {jwtService} from "../application/jwt-service";
 import {commentsRouter} from "./comments-router";
+import {usersService} from "../domain/users-service";
 
 
 export const postsRouter = Router({});
@@ -71,11 +72,15 @@ postsRouter.put('/:postId',
 
 postsRouter.get('/:postId', async (req: Request, res: Response) => {
 
-        if (typeof req.params.postId !== "string") {
-            res.send(400);
-            return;
-        }
+    if (typeof req.params.postId !== "string") {
+        res.send(400);
+        return;
+    }
 
+
+    const auth = req.headers.authorization
+
+    if (!auth) {
         const post = await postsService.getPostById(req.params.postId)
 
         if (post) {
@@ -83,6 +88,33 @@ postsRouter.get('/:postId', async (req: Request, res: Response) => {
         } else {
             res.send(404);
         }
+    }
+
+    if (auth) {
+
+        const token = auth.split(' ')[1]
+        const userId = await jwtService.getUserIdByToken(token)
+
+        const post = await postsService.getPostById(req.params.postId, userId)
+
+        if (post) {
+            res.status(200).send(post);
+        } else {
+            res.send(404);
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
     }
 )
 

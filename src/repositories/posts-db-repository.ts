@@ -27,9 +27,18 @@ export class PostsRepository {
         return newPost
     }
 
-    async getPostById(postId: string): Promise<PostType | null> {
-        const post = await PostsModel.findOne({id: postId}, {_id: 0, __v: 0})
-        return post;
+    async getPostById(postId: string, userId?: string) {
+        debugger
+        if(!userId) {
+            return PostsModel.findOne({id: postId}, {_id: 0, __v: 0})
+        }
+
+        if(userId) {
+            const likesStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: postId, userId})
+            const post = await PostsModel.findOne({id: postId}, {_id: 0, __v: 0})
+
+            return [likesStatus, post]
+        }
     }
 
     async updatePost(postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean> {
@@ -49,7 +58,6 @@ export class PostsRepository {
 
     async updateLikeStatus(user: any, postId: string, likeStatus: "None" | "Like" | "Dislike", addedLikeStatusAt: object): Promise<boolean|undefined> {
 
-        debugger
         const isLikeStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: postId, userId: user.id})
 
         if (!isLikeStatus) {
@@ -57,7 +65,7 @@ export class PostsRepository {
             if(likeStatus === "Like") {
                 // await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"likesInfo.likesCount": 1}, })
                 // await PostsModel.findOneAndUpdate({id: postId}, {"likesInfo.myStatus": likeStatus})
-                const a = await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": 1}, "extendedLikesInfo.myStatus": likeStatus})
+                const a = await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": 1}})
 
                 const newestLike = {
                     addedAt:addedLikeStatusAt,
@@ -72,7 +80,7 @@ export class PostsRepository {
                 return true
             }
             if(likeStatus === "Dislike") {
-                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.dislikesCount": 1}, "extendedLikesInfo.myStatus": likeStatus})
+                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.dislikesCount": 1}})
                 return true
             }
 
@@ -81,7 +89,7 @@ export class PostsRepository {
             await likesStatusCollection.updateOne({id: postId, userId: user.id}, {$set: {likeStatus}})
 
             if(likeStatus === "Like" && isLikeStatus.likeStatus === "Dislike") {
-                const a = await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": 1, "extendedLikesInfo.dislikesCount": -1}, "extendedLikesInfo.myStatus": likeStatus})
+                const a = await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": 1, "extendedLikesInfo.dislikesCount": -1}})
                 const newestLike = {
                     addedAt:addedLikeStatusAt,
                     userId: user.id,
@@ -95,7 +103,7 @@ export class PostsRepository {
             }
 
             if(likeStatus === "Like" && isLikeStatus.likeStatus === "None") {
-                const a = await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": 1}, "extendedLikesInfo.myStatus": likeStatus})
+                const a = await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": 1}})
 
                 const newestLike = {
                     addedAt:addedLikeStatusAt,
@@ -116,7 +124,7 @@ export class PostsRepository {
             if(likeStatus === "Dislike" && isLikeStatus.likeStatus === "Like") {
                 // await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"likesInfo.likesCount": -1}})
                 // await PostsModel.findOneAndUpdate({id: postId}, {"likesInfo.myStatus": likeStatus})
-                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1, "extendedLikesInfo.dislikesCount": 1}, "extendedLikesInfo.myStatus": likeStatus})
+                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1, "extendedLikesInfo.dislikesCount": 1}})
                 return true
             }
 
@@ -125,17 +133,17 @@ export class PostsRepository {
             }
 
             if(likeStatus === "Dislike" && isLikeStatus.likeStatus !== "Like") {
-                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1}, "extendedLikesInfo.myStatus": likeStatus})
+                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1}})
                 return true
             }
 
             if(likeStatus === "None" && isLikeStatus.likeStatus === "Like") {
-                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1}, "extendedLikesInfo.myStatus": likeStatus})
+                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1}})
                 return true
             }
 
             if(likeStatus === "None" && isLikeStatus.likeStatus === "Dislike") {
-                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.dislikesCount": -1}, "extendedLikesInfo.myStatus": likeStatus})
+                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.dislikesCount": -1}})
                 return true
             }
 
