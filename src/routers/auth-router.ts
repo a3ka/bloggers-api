@@ -57,7 +57,7 @@ authRouter.post('/refresh-token', async (req: Request, res: Response) => {
         res.cookie('refreshToken', jwtTokenPair.refreshToken, {
             httpOnly: true,
             secure: true
-            // secure: process.env.NODE_ENV === "production",
+            // secure: pro  cess.env.NODE_ENV === "production",
         })
 
         await authService.addRefreshTokenToBlackList(refreshToken)

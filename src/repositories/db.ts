@@ -98,7 +98,7 @@ export type CommentType = {
     userId: string,
     userLogin: string,
     addedAt: object,
-    extendedLikesInfo: {
+    likesInfo: {
         likesCount: number
         dislikesCount: number
         myStatus: string
@@ -194,7 +194,7 @@ const commentsSchema = new mongoose.Schema<CommentType>({
         userId: String,
         userLogin: String,
         addedAt: Object,
-        extendedLikesInfo: {
+        likesInfo: {
             likesCount: Number,
             dislikesCount: Number,
             myStatus: String

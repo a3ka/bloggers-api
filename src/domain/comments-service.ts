@@ -36,7 +36,7 @@ class CommentsService {
                 userId: user.id,
                 userLogin: user.login,
                 addedAt: new Date,
-                extendedLikesInfo: {
+                likesInfo: {
                     likesCount: 0,
                     dislikesCount: 0,
                     myStatus: "None"
