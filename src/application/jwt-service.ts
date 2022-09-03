@@ -6,11 +6,11 @@ export const jwtService = {
     async createJWTPair(user: UsersWithPassType) {
         // @ts-ignore
         const accessToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
-            expiresIn: 1000
+            expiresIn: 100
         })
 
         const refreshToken = jwt.sign({userId: user.id}, process.env.JWT_SECRET || '123', {
-            expiresIn: 2000
+            expiresIn: 200
         })
 
         const jwtTokenPair = {accessToken, refreshToken}
