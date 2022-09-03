@@ -72,47 +72,39 @@ postsRouter.put('/:postId',
 
 postsRouter.get('/:postId', async (req: Request, res: Response) => {
 
-    if (typeof req.params.postId !== "string") {
-        res.send(400);
-        return;
-    }
-
-
-    const auth = req.headers.authorization
-
-    if (!auth) {
-        const post = await postsService.getPostById(req.params.postId)
-
-        if (post) {
-            res.status(200).send(post);
-        } else {
-            res.send(404);
-        }
-    }
-
-    if (auth) {
-
-        const token = auth.split(' ')[1]
-        const userId = await jwtService.getUserIdByToken(token)
-
-        const post = await postsService.getPostById(req.params.postId, userId)
-
-        if (post) {
-            res.status(200).send(post);
-        } else {
-            res.send(404);
+        if (typeof req.params.postId !== "string") {
+            res.send(400);
+            return;
         }
 
 
-    }
+        const auth = req.headers.authorization
+
+        if (!auth) {
+            const post = await postsService.getPostById(req.params.postId)
+
+            if (post) {
+                res.status(200).send(post);
+            } else {
+                res.send(404);
+            }
+        }
+
+        if (auth) {
+
+            const token = auth.split(' ')[1]
+            const userId = await jwtService.getUserIdByToken(token)
+
+            const post = await postsService.getPostById(req.params.postId, userId)
+
+            if (post) {
+                res.status(200).send(post);
+            } else {
+                res.send(404);
+            }
 
 
-
-
-
-
-
-
+        }
 
 
     }
@@ -140,7 +132,12 @@ postsRouter.post('/:postId/comments',
         const post = await postsService.getPostById(req.params.postId)
 
         if (!post) {
-            res.status(404).send({errorsMessages: [{message: "Post with specified postId doesn't exists", field: "postId"}]});
+            res.status(404).send({
+                errorsMessages: [{
+                    message: "Post with specified postId doesn't exists",
+                    field: "postId"
+                }]
+            });
             return
         }
 
@@ -157,7 +154,12 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
         const post = await postsService.getPostById(req.params.postId,)
 
         if (!post) {
-            res.status(404).send({errorsMessages: [{message: "Post with specified postId doesn't exists", field: "postId"}]});
+            res.status(404).send({
+                errorsMessages: [{
+                    message: "Post with specified postId doesn't exists",
+                    field: "postId"
+                }]
+            });
             return
         }
 
@@ -175,10 +177,19 @@ postsRouter.put('/:postId/like-status',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
+    debugger
+
         const post = await postsService.getPostById(req.params.postId)
 
+        debugger
+
         if (!post) {
-            res.status(404).send({errorsMessages: [{message: "Post with specified postId doesn't exists", field: "postId"}]});
+            res.status(404).send({
+                errorsMessages: [{
+                    message: "Post with specified postId doesn't exists",
+                    field: "postId"
+                }]
+            });
             return
         }
 
