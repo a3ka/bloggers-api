@@ -38,7 +38,7 @@ export type PostType = {
     bloggerId: string
     bloggerName: string
     addedAt: object // new
-    likesInfo: {
+    extendedLikesInfo: {
         likesCount: number
         dislikesCount: number
         myStatus: string
@@ -98,7 +98,7 @@ export type CommentType = {
     userId: string,
     userLogin: string,
     addedAt: object,
-    likesInfo: {
+    extendedLikesInfo: {
         likesCount: number
         dislikesCount: number
         myStatus: string
@@ -157,7 +157,7 @@ const postsSchema = new mongoose.Schema<PostType>({
         bloggerId: String,
         bloggerName: String,
         addedAt: Object, // new
-        likesInfo: {
+        extendedLikesInfo: {
             likesCount: Number,
             dislikesCount: Number,
             myStatus: String,
@@ -194,7 +194,7 @@ const commentsSchema = new mongoose.Schema<CommentType>({
         userId: String,
         userLogin: String,
         addedAt: Object,
-        likesInfo: {
+        extendedLikesInfo: {
             likesCount: Number,
             dislikesCount: Number,
             myStatus: String
