@@ -10,7 +10,6 @@ import {
 export class UsersRepository {
     async getAllUsers(pageNumber: number, pageSize: number): Promise<UsersExtendedType | undefined | null> {
 
-        debugger
         // @ts-ignore
         const users = await UsersModel.find({}, {_id: 0, password: 0, email: 0, isConfirmed: 0, __v: 0}).skip((pageNumber - 1) * pageSize).limit(pageSize).lean()
 
@@ -29,7 +28,6 @@ export class UsersRepository {
     }
 
     async createUser(newUser: UsersWithPassType): Promise<UsersType> {
-        debugger
         // @ts-ignore
         await UsersModel.insertMany([newUser])
         // await usersCollection.insertOne(newUser)
@@ -40,7 +38,6 @@ export class UsersRepository {
     }
 
     async findUserByLogin(login: string): Promise<UsersWithPassType | boolean> {
-        debugger
         const user = await UsersModel.findOne({login: login}, {_id: 0, email: 0, isConfirmed: 0, __v: 0})
 
         if(user === null) return false

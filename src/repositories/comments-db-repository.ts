@@ -1,6 +1,6 @@
 import {
     CommentContentType, CommentsModel, CommentsExtendedType,
-    CommentType
+    CommentType, LikesStatusType, likesStatusCollection
 } from "./db";
 
 export class CommentsRepository {
@@ -54,6 +54,70 @@ export class CommentsRepository {
     async deleteAllComments(): Promise<boolean> {
         await CommentsModel.deleteMany({})
         return true
+    }
+
+    async updateLikeStatus(user: any, commentId: string, likeStatus: "None" | "Like" | "Dislike"): Promise<boolean|undefined> {
+
+        const isLikeStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: commentId, userId: user.id})
+
+        if (!isLikeStatus) {
+            await likesStatusCollection.insertOne({id: commentId, userId: user.id, likeStatus})
+            if(likeStatus === "Like") {
+                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1}, "likesInfo.myStatus": likeStatus})
+                return true
+            }
+            if(likeStatus === "Dislike") {
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.dislikesCount": 1}, "likesInfo.myStatus": likeStatus})
+                return true
+            }
+
+        } else {
+
+            await likesStatusCollection.updateOne({id: commentId, userId: user.id}, {$set: {likeStatus}})
+
+            if(likeStatus === "Like" && isLikeStatus.likeStatus === "Dislike") {
+                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1, "likesInfo.dislikesCount": -1}, "likesInfo.myStatus": likeStatus})
+                return true
+            }
+
+            if(likeStatus === "Like" && isLikeStatus.likeStatus === "None") {
+                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1}, "likesInfo.myStatus": likeStatus})
+                return true
+            }
+
+            if(likeStatus === "Like" && isLikeStatus.likeStatus === "Like") {
+                return true
+            }
+
+            if(likeStatus === "Dislike" && isLikeStatus.likeStatus === "Like") {
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1, "likesInfo.dislikesCount": 1}, "likesInfo.myStatus": likeStatus})
+                return true
+            }
+
+            if(likeStatus === "Dislike" && isLikeStatus.likeStatus === "Dislike") {
+                return true
+            }
+
+            if(likeStatus === "Dislike" && isLikeStatus.likeStatus !== "Like") {
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1}, "likesInfo.myStatus": likeStatus})
+                return true
+            }
+
+            if(likeStatus === "None" && isLikeStatus.likeStatus === "Like") {
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1}, "likesInfo.myStatus": likeStatus})
+                return true
+            }
+
+            if(likeStatus === "None" && isLikeStatus.likeStatus === "Dislike") {
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.dislikesCount": -1}, "likesInfo.myStatus": likeStatus})
+                return true
+            }
+
+            if(likeStatus === "None" && isLikeStatus.likeStatus === "None") {
+                return true
+            }
+            return true
+        }
     }
 }
 

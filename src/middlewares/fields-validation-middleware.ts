@@ -14,7 +14,8 @@ export const fieldsValidationMiddleware = {
     passwordValidation: body('password').trim().isLength({min: 6, max: 20}).isString(),
     emailValidation: body('email').trim().isString().isEmail(),
 
-    commentContentValidation: body('content').trim().isLength({min: 20, max: 300}).isString()
+    commentContentValidation: body('content').trim().isLength({min: 20, max: 300}).isString(),
 
+    likeStatusValidation: body('likeStatus').isIn(["None", "Like", "Dislike"])
 
 }

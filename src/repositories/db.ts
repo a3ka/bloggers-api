@@ -21,7 +21,13 @@ export type BloggersExtendedType = {
     page: number
     pageSize: number
     totalCount: number
-    items: [ BloggersType | BloggersType[] ]
+    items: [BloggersType | BloggersType[]]
+}
+
+export type NewestLikesType = {
+    addedAt: Object
+    userId: String
+    login: String
 }
 
 export type PostType = {
@@ -31,6 +37,13 @@ export type PostType = {
     content: string
     bloggerId: string
     bloggerName: string
+    addedAt: object // new
+    likesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: string
+        newestLikes: [NewestLikesType | NewestLikesType[]]
+    }
 }
 
 export type PostsOfBloggerType = {
@@ -38,7 +51,7 @@ export type PostsOfBloggerType = {
     page: number
     pageSize: number
     totalCount: number
-    items: [ PostType | PostType[] ]
+    items: [PostType | PostType[]]
 }
 
 export type UsersType = {
@@ -68,7 +81,7 @@ export type UsersExtendedType = {
     page: number
     pageSize: number
     totalCount: number
-    items: [ UsersType | UsersType[] ]
+    items: [UsersType | UsersType[]]
 }
 
 export type UsersEmailConfDataType = {
@@ -84,7 +97,12 @@ export type CommentType = {
     content: string,
     userId: string,
     userLogin: string,
-    addedAt: object
+    addedAt: object,
+    likesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: string
+    }
 }
 
 export type CommentContentType = {
@@ -96,7 +114,7 @@ export type CommentsExtendedType = {
     page: number
     pageSize: number
     totalCount: number
-    items: [ CommentType | CommentType[] ]
+    items: [CommentType | CommentType[]]
 }
 
 export type AttemptType = {
@@ -109,6 +127,11 @@ export type RefreshTokensCollectionType = {
     refreshToken: string
 }
 
+export type LikesStatusType = {
+    id: string
+    userId: string
+    likeStatus: "None" | "Like" | "Dislike"
+}
 
 
 // const mongoUri = process.env.MongoURI || "mongodb+srv://alexk:123qweasd@cluster0.lapbhyv.mongodb.net/?retryWrites=true&w=majority"
@@ -127,13 +150,27 @@ const bloggersSchema = new mongoose.Schema<BloggersType>({
 })
 
 const postsSchema = new mongoose.Schema<PostType>({
-    id: String,
-    title: String,
-    shortDescription: String,
-    content: String,
-    bloggerId: String,
-    bloggerName: String,
-})
+        id: String,
+        title: String,
+        shortDescription: String,
+        content: String,
+        bloggerId: String,
+        bloggerName: String,
+        addedAt: Object, // new
+        likesInfo: {
+            likesCount: Number,
+            dislikesCount: Number,
+            myStatus: String,
+            newestLikes: [
+                {
+                    addedAt: Object,
+                    userId: String,
+                    login: String
+                }
+            ]
+        }
+    }, {_id: false}
+)
 
 const usersSchema = new mongoose.Schema<UsersType>({
     id: String,
@@ -143,23 +180,27 @@ const usersSchema = new mongoose.Schema<UsersType>({
     email: String
 })
 
-
-const usersEmailConfDataSchema = new mongoose.Schema<UsersEmailConfDataType> ({
+const usersEmailConfDataSchema = new mongoose.Schema<UsersEmailConfDataType>({
     email: String,
     confirmationCode: String,
     expirationDate: Date,
     isConfirmed: Boolean
 })
 
-const commentsSchema = new mongoose.Schema<CommentType> ({
-    postId: String,
-    id: String,
-    content: String,
-    userId: String,
-    userLogin: String,
-    addedAt: Object
-})
-
+const commentsSchema = new mongoose.Schema<CommentType>({
+        postId: String,
+        id: String,
+        content: String,
+        userId: String,
+        userLogin: String,
+        addedAt: Object,
+        likesInfo: {
+            likesCount: Number,
+            dislikesCount: Number,
+            myStatus: String
+        }
+    }, {_id: false}
+)
 
 
 // export const bloggersCollection = db.collection<BloggersType>("bloggers")
@@ -178,7 +219,10 @@ export const usersEmailConfDataModel = mongoose.model("usersEmailConfData", user
 export const CommentsModel = mongoose.model("comments", commentsSchema)
 
 export const endpointsAttemptsTrysCollection = db.collection<AttemptType>("attempts")
+
 export const refreshTokensBlackListCollection = db.collection<RefreshTokensCollectionType>("refreshTokensBL")
+
+export const likesStatusCollection = db.collection<LikesStatusType>("likesStatus")
 
 
 export async function runDb() {

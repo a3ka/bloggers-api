@@ -12,7 +12,6 @@ class AuthService {
     }
     async checkCredentials(login: string, password: string) {
         const user = await this.usersRepository.findUserByLogin(login)
-        debugger
         if (!user) return false
         // @ts-ignore
         if (user.password !== password) {
@@ -44,8 +43,6 @@ class AuthService {
 
         await this.usersRepository.createUser(newUser.accountData)
         await this.usersRepository.insertToDbUnconfirmedEmail(newUser.emailConfirmation)
-
-        debugger
 
         try {
             await emailManager.sendEmailConfirmationCode(email, newUser.emailConfirmation.confirmationCode)

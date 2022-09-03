@@ -35,8 +35,18 @@ class PostsService {
                 shortDescription,
                 content,
                 bloggerId,
-                bloggerName: blogger.name
+                bloggerName: blogger.name,
+                addedAt: new Date,
+                likesInfo: {
+                    likesCount: 0,
+                    dislikesCount: 0,
+                    myStatus: "None",
+                    newestLikes: [
+
+                    ]
+                }
             }
+            // @ts-ignore
             const createdPost = await this.postsRepository.createPost(newPost)
             return createdPost
         }
@@ -52,6 +62,12 @@ class PostsService {
 
     async deletePost (postId: string): Promise<boolean>  {
         return this.postsRepository.deletePost(postId)
+    }
+
+    async updateLikeStatus (user: any, postId: string, likeStatus: "None" | "Like" | "Dislike"): Promise<boolean|undefined>  {
+
+        const addedLikeStatusAt = new Date()
+        return this.postsRepository.updateLikeStatus(user,postId, likeStatus, addedLikeStatusAt)
     }
 }
 

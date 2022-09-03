@@ -5,10 +5,10 @@ import {
     CommentsExtendedType,
     CommentType,
 } from "../repositories/db";
-import {CommentsRepository} from "../repositories/comments-db-repository";
+import {commentsRepository, CommentsRepository} from "../repositories/comments-db-repository";
 
 class CommentsService {
-    private commentsRepository: any;
+    private commentsRepository: CommentsRepository;
     private postsRepository: PostsRepository;
     constructor() {
         this.commentsRepository = new CommentsRepository()
@@ -35,7 +35,12 @@ class CommentsService {
                 content: content,
                 userId: user.id,
                 userLogin: user.login,
-                addedAt: new Date
+                addedAt: new Date,
+                likesInfo: {
+                    likesCount: 0,
+                    dislikesCount: 0,
+                    myStatus: "None"
+                }
             }
 
             const createdComment = await this.commentsRepository.createComment(newComment)
@@ -49,6 +54,11 @@ class CommentsService {
 
     async deleteComment (commentId: string): Promise<boolean>  {
         return this.commentsRepository.deleteComment(commentId)
+    }
+
+    async updateLikeStatus (user: any, commentId: string, likeStatus: "None" | "Like" | "Dislike"): Promise<boolean|undefined>  {
+
+        return this.commentsRepository.updateLikeStatus(user, commentId, likeStatus)
     }
 }
 

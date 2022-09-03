@@ -60,8 +60,18 @@ class BloggersService {
                 shortDescription,
                 content,
                 bloggerId,
-                bloggerName: blogger.name
+                bloggerName: blogger.name,
+                addedAt: new Date,
+                likesInfo: {
+                    likesCount: 0,
+                    dislikesCount: 0,
+                    myStatus: "None",
+                    newestLikes: [
+
+                    ]
+                }
             }
+            // @ts-ignore
             const createdPostDb = await this.postsRepository.createPost(newPost)
             // const createdPost = omit_Id(createdPostDb)
             return createdPostDb

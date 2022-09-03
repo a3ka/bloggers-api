@@ -17,7 +17,6 @@ authRouter.post('/login',
 
     async (req: Request, res: Response) => {
         const user = await authService.checkCredentials(req.body.login, req.body.password)
-        debugger
         if (!user) {
             res.send(401)
             return
@@ -89,7 +88,6 @@ authRouter.get('/me',
     authBearerMiddleware,
     async (req: Request, res: Response) => {
 
-        debugger
         const header = req.headers.authorization
         if (!header) return res.sendStatus(401)
 

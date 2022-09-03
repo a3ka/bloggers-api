@@ -98,6 +98,22 @@ commentsRouter.get('/:commentId', async (req: Request, res: Response) => {
     }
 )
 
+commentsRouter.put('/:commentId/like-status',
+    authBearerMiddleware,
+    fieldsValidationMiddleware.likeStatusValidation,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+        const comment = await commentsService.findComment(req.params.commentId)
+        if (!comment) {
+            res.status(404).send({errorsMessages: [{message: "Comment not found", field: "commentId"}]});
+            return
+        }
+        // @ts-ignore
+        await commentsService.updateLikeStatus(req.user, req.params.commentId, req.body.likeStatus)
+        res.sendStatus(204)
+    }
+)
+
 
 
 

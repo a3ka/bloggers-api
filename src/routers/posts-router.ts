@@ -6,6 +6,9 @@ import {fieldsValidationMiddleware} from "../middlewares/fields-validation-middl
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
 import {authBearerMiddleware} from "../middlewares/auth-bearer-middleware";
 import {commentsService} from "../domain/comments-service";
+import {CommentType} from "../repositories/db";
+import {jwtService} from "../application/jwt-service";
+import {commentsRouter} from "./comments-router";
 
 
 export const postsRouter = Router({});
@@ -132,6 +135,30 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
         res.status(200).send(comments)
     }
 )
+
+
+postsRouter.post('/:postId/like-status',
+    authBearerMiddleware,
+    fieldsValidationMiddleware.likeStatusValidation,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+
+        const post = await postsService.getPostById(req.params.postId)
+
+        if (!post) {
+            res.status(404).send({errorsMessages: [{message: "Post with specified postId doesn't exists", field: "postId"}]});
+            return
+        }
+
+        // @ts-ignore
+        const likeStatus = await postsService.updateLikeStatus(req.user, req.params.postId, req.body.likeStatus)
+
+        res.status(201).send(likeStatus)
+    }
+)
+
+
+
 
 
 
