@@ -58,12 +58,10 @@ class PostsService {
             post!.extendedLikesInfo.myStatus = "None"
             return post
         } else {
-            debugger
             // @ts-ignore
             const [likesStatus, post] = await this.postsRepository.getPostById(postId, userId)
 
             post!.extendedLikesInfo.myStatus = likesStatus.likeStatus
-            debugger
             return post
         }
     }
