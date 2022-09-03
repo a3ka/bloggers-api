@@ -88,13 +88,32 @@ commentsRouter.get('/:commentId', async (req: Request, res: Response) => {
             return;
         }
 
-        const comment = await commentsService.findComment(req.params.commentId)
+        const auth = req.headers.authorization
 
-        if (comment) {
-            res.status(200).send(comment);
-        } else {
-            res.send(404);
+        if (!auth) {
+            const comment = await commentsService.findComment(req.params.commentId)
+
+            if (comment) {
+                res.status(200).send(comment);
+            } else {
+                res.send(404);
+            }
         }
+
+        if (auth) {
+            const token = auth.split(' ')[1]
+            const userId = await jwtService.getUserIdByToken(token)
+
+            const comment = await commentsService.findComment(req.params.commentId, userId)
+
+
+            if (comment) {
+                res.status(200).send(comment);
+            } else {
+                res.send(404);
+            }
+        }
+
     }
 )
 

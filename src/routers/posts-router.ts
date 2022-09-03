@@ -77,7 +77,6 @@ postsRouter.get('/:postId', async (req: Request, res: Response) => {
             return;
         }
 
-
         const auth = req.headers.authorization
 
         if (!auth) {
@@ -102,11 +101,7 @@ postsRouter.get('/:postId', async (req: Request, res: Response) => {
             } else {
                 res.send(404);
             }
-
-
         }
-
-
     }
 )
 
@@ -177,11 +172,7 @@ postsRouter.put('/:postId/like-status',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-    debugger
-
         const post = await postsService.getPostById(req.params.postId)
-
-        debugger
 
         if (!post) {
             res.status(404).send({

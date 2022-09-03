@@ -51,19 +51,14 @@ class PostsService {
     }
 
     async getPostById (postId: string, userId?: string) {
-
-        debugger
         const post = await this.postsRepository.getPostById(postId)
         if(post === null) {
             return undefined
         }
 
-
         if(!userId) {
-            debugger
             // @ts-ignore
             post!.extendedLikesInfo.myStatus = "None"
-            debugger
             return post
         } else {
             // @ts-ignore

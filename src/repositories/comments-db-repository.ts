@@ -1,6 +1,6 @@
 import {
     CommentContentType, CommentsModel, CommentsExtendedType,
-    CommentType, LikesStatusType, likesStatusCollection
+    CommentType, LikesStatusType, likesStatusCollection, PostsModel
 } from "./db";
 
 export class CommentsRepository {
@@ -22,10 +22,18 @@ export class CommentsRepository {
         return result
     }
 
-    async findComment (commentId: string): Promise<CommentType | undefined | null> {
-        const comment = await CommentsModel.findOne({id: commentId}, {_id: 0, postId: 0, __v: 0})
-        // @ts-ignore
-        return comment
+    async findComment (commentId: string, userId?:string) {
+
+        if(!userId) {
+            return CommentsModel.findOne({id: commentId}, {_id: 0, postId: 0, __v: 0})
+        }
+
+        if(userId) {
+            const likesStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: commentId, userId})
+            const comment = await CommentsModel.findOne({id: commentId}, {_id: 0, postId: 0, __v: 0})
+
+            return [likesStatus, comment]
+        }
     }
 
     async createComment (newComment: CommentType): Promise<CommentType | undefined> {

@@ -19,9 +19,24 @@ class CommentsService {
         return posts
     }
 
-    async findComment (commentId: string): Promise<CommentType | undefined | null> {
+    async findComment (commentId: string, userId?: string) {
         const comment = await this.commentsRepository.findComment(commentId)
-        return comment
+
+        if(comment === null) {
+            return undefined
+        }
+
+        if(!userId) {
+            // @ts-ignore
+            comment!.likesInfo.myStatus = "None"
+            return comment
+        } else {
+            // @ts-ignore
+            const [likesStatus, comment] = await this.commentsRepository.findComment(commentId, userId)
+
+            comment!.likesInfo.myStatus  = likesStatus.likeStatus
+            return comment
+        }
     }
 
     async createCommentByPostId (user:any, postId: string, content:string): Promise<CommentType | undefined> {
