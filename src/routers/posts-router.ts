@@ -137,7 +137,7 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
 )
 
 
-postsRouter.post('/:postId/like-status',
+postsRouter.put('/:postId/like-status',
     authBearerMiddleware,
     fieldsValidationMiddleware.likeStatusValidation,
     inputValidationMiddleware,
