@@ -73,7 +73,7 @@ debugger
                 }
 
                 // @ts-ignore
-                a.extendedLikesInfo.newestLikes = [newestLike, ...a.extendedLikesInfo.newestLikes]
+                a.extendedLikesInfo.newestLikes = [...a.extendedLikesInfo.newestLikes, newestLike]
                 // @ts-ignore
                 await a.save()
                 return true
@@ -95,7 +95,7 @@ debugger
                     login: user.login
                 }
                 // @ts-ignore
-                a.extendedLikesInfo.newestLikes = [newestLike, ...a.extendedLikesInfo.newestLikes]
+                a.extendedLikesInfo.newestLikes = [...a.extendedLikesInfo.newestLikes, newestLike]
                 // @ts-ignore
                 await a.save()
                 return true
@@ -110,7 +110,7 @@ debugger
                     login: user.login
                 }
                 // @ts-ignore
-                a.extendedLikesInfo.newestLikes = [newestLike, ...a.extendedLikesInfo.newestLikes]
+                a.extendedLikesInfo.newestLikes = [...a.extendedLikesInfo.newestLikes, newestLike]
                 // @ts-ignore
                 await a.save()
                 return true
