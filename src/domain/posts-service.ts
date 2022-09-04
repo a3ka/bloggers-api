@@ -1,4 +1,3 @@
-
 import {BloggersRepository} from "../repositories/bloggers-db-repository";
 import {PostsRepository} from "../repositories/posts-db-repository";
 import {PostType} from "../repositories/db";
@@ -7,26 +6,57 @@ import {PostType} from "../repositories/db";
 class PostsService {
     private postsRepository: PostsRepository;
     private bloggersRepository: BloggersRepository;
+
     constructor() {
         this.postsRepository = new PostsRepository()
         this.bloggersRepository = new BloggersRepository()
     }
 
-    async getAllPosts (pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<{}> {
+    // async getAllPosts (pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<{}> {
+    //
+    //     const postsDb = await this.postsRepository.getAllPosts(+pageNumber, +pageSize)
+    //     // @ts-ignore
+    //     const posts = {...postsDb}
+    //
+    //     // @ts-ignore
+    //     for (let i = 0; i < posts.items.length; i++) {
+    //         // @ts-ignore
+    //         delete posts.items[i]._id
+    //     }
+    //     return posts
+    // }
 
-        const postsDb = await this.postsRepository.getAllPosts(+pageNumber, +pageSize)
-        // @ts-ignore
-        const posts = {...postsDb}
+    async getAllPosts(pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null, userId?: string): Promise<{}> {
 
-        // @ts-ignore
-        for (let i = 0; i < posts.items.length; i++) {
+        if (!userId) {
+            const postsDb = await this.postsRepository.getAllPosts(+pageNumber, +pageSize)
             // @ts-ignore
-            delete posts.items[i]._id
+            const posts = {...postsDb}
+
+            // @ts-ignore
+            for (let i = 0; i < posts.items.length; i++) {
+                // @ts-ignore
+                delete posts.items[i]._id
+            }
+            return posts
+        } else {
+
+            // @ts-ignore
+            const [likesStatus, posts] = await this.postsRepository.getAllPosts(+pageNumber, +pageSize, userId)
+
+            for(const el of posts.items) {
+                for(const item of likesStatus) {
+                    if(item.id === el.id && item.userId === userId) {
+                        el.extendedLikesInfo.myStatus = item.likeStatus
+                    }
+                }
+            }
+
+            return posts
         }
-        return posts
     }
 
-    async createPost (title: string, shortDescription: string, content: string, bloggerId: string): Promise<PostType | undefined> {
+    async createPost(title: string, shortDescription: string, content: string, bloggerId: string): Promise<PostType | undefined> {
         const blogger = await this.bloggersRepository.getBloggerById(bloggerId)
         if (blogger) {
             const newPost = {
@@ -50,14 +80,14 @@ class PostsService {
         }
     }
 
-    async getPostById (postId: string, userId?: string) {
-        debugger
+    async getPostById(postId: string, userId?: string) {
+
         const post = await this.postsRepository.getPostById(postId)
-        if(post === null) {
+        if (post === null) {
             return undefined
         }
 
-        if(!userId) {
+        if (!userId) {
             // @ts-ignore
             post!.extendedLikesInfo.myStatus = "None"
             return post
@@ -65,7 +95,7 @@ class PostsService {
             // @ts-ignore
             const [likesStatus, post] = await this.postsRepository.getPostById(postId, userId)
 
-            if(likesStatus === null) {
+            if (likesStatus === null) {
                 return post
             } else {
                 post!.extendedLikesInfo.myStatus = likesStatus.likeStatus
@@ -74,18 +104,18 @@ class PostsService {
         }
     }
 
-    async updatePost (postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean>  {
+    async updatePost(postId: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<boolean> {
         return this.postsRepository.updatePost(postId, title, shortDescription, content, bloggerId)
     }
 
-    async deletePost (postId: string): Promise<boolean>  {
+    async deletePost(postId: string): Promise<boolean> {
         return this.postsRepository.deletePost(postId)
     }
 
-    async updateLikeStatus (user: any, postId: string, likeStatus: "None" | "Like" | "Dislike"): Promise<boolean|undefined>  {
+    async updateLikeStatus(user: any, postId: string, likeStatus: "None" | "Like" | "Dislike"): Promise<boolean | undefined> {
 
         const addedLikeStatusAt = new Date()
-        return this.postsRepository.updateLikeStatus(user,postId, likeStatus, addedLikeStatusAt)
+        return this.postsRepository.updateLikeStatus(user, postId, likeStatus, addedLikeStatusAt)
     }
 }
 

@@ -10,15 +10,27 @@ import {CommentType} from "../repositories/db";
 import {jwtService} from "../application/jwt-service";
 import {commentsRouter} from "./comments-router";
 import {usersService} from "../domain/users-service";
+import {isLogInMiddleware} from "../middlewares/isLogIn-middleware";
 
 
 export const postsRouter = Router({});
 
 
-postsRouter.get('/', async (req: Request, res: Response) => {
+postsRouter.get('/',
+    isLogInMiddleware,
+
+    async (req: Request, res: Response) => {
+
         // @ts-ignore
-        const posts = await postsService.getAllPosts(req.query.PageNumber, req.query.PageSize)
-        res.status(200).send(posts);
+        if (req.user) {
+            // @ts-ignore
+            const posts = await postsService.getAllPosts(req.query.PageNumber, req.query.PageSize, req.user)
+            res.status(200).send(posts);
+        } else {
+            // @ts-ignore
+            const posts = await postsService.getAllPosts(req.query.PageNumber, req.query.PageSize)
+            res.status(200).send(posts);
+        }
     }
 )
 
@@ -171,11 +183,9 @@ postsRouter.put('/:postId/like-status',
     fieldsValidationMiddleware.likeStatusValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        debugger
         // @ts-ignore
         const post = await postsService.getPostById(req.params.postId, req.user)
 
-        debugger
         if (!post) {
             res.status(404).send({
                 errorsMessages: [{

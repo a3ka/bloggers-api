@@ -2,8 +2,7 @@ import {likesStatusCollection, LikesStatusType, PostsModel, PostsOfBloggerType, 
 
 export class PostsRepository {
 
-    async getAllPosts(pageNumber: number, pageSize: number): Promise<PostsOfBloggerType | undefined | null> {
-
+    async getAllPosts(pageNumber: number, pageSize: number, userId?: string): Promise<PostsOfBloggerType | undefined | null> {
         const postsCount = await PostsModel.count({})
         const pagesCount = Math.ceil(postsCount / pageSize)
         const posts: PostType[] | PostType = await PostsModel.find({}, {
@@ -18,8 +17,16 @@ export class PostsRepository {
             totalCount: postsCount,
             items: posts
         }
-        // @ts-ignore
-        return result
+
+        if (!userId){
+            // @ts-ignore
+            return result
+        } else {
+            const likesStatus:LikesStatusType[]|null = await likesStatusCollection.find({userId}).toArray()
+            // @ts-ignore
+            return [likesStatus, result]
+        }
+
     }
 
     async createPost(newPost: PostType): Promise<PostType | undefined> {
@@ -35,7 +42,6 @@ export class PostsRepository {
         if(userId) {
             const likesStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: postId, userId})
             const post = await PostsModel.findOne({id: postId}, {_id: 0, __v: 0})
-debugger
             return [likesStatus, post]
         }
     }
@@ -56,7 +62,6 @@ debugger
     }
 
     async updateLikeStatus(user: any, postId: string, likeStatus: "None" | "Like" | "Dislike", addedLikeStatusAt: object): Promise<boolean|undefined> {
-        debugger
         const isLikeStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: postId, userId: user.id})
 
         if (!isLikeStatus) {
@@ -121,7 +126,6 @@ debugger
             }
 
             if(likeStatus === "Dislike" && isLikeStatus.likeStatus === "Like") {
-                debugger
                 // await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"likesInfo.likesCount": -1}})
                 // await PostsModel.findOneAndUpdate({id: postId}, {"likesInfo.myStatus": likeStatus})
                 const posts:PostType|null = await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1, "extendedLikesInfo.dislikesCount": 1}})
