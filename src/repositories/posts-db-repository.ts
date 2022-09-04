@@ -35,7 +35,7 @@ export class PostsRepository {
         if(userId) {
             const likesStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: postId, userId})
             const post = await PostsModel.findOne({id: postId}, {_id: 0, __v: 0})
-
+debugger
             return [likesStatus, post]
         }
     }
@@ -56,7 +56,7 @@ export class PostsRepository {
     }
 
     async updateLikeStatus(user: any, postId: string, likeStatus: "None" | "Like" | "Dislike", addedLikeStatusAt: object): Promise<boolean|undefined> {
-
+        debugger
         const isLikeStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: postId, userId: user.id})
 
         if (!isLikeStatus) {
@@ -121,9 +121,29 @@ export class PostsRepository {
             }
 
             if(likeStatus === "Dislike" && isLikeStatus.likeStatus === "Like") {
+                debugger
                 // await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"likesInfo.likesCount": -1}})
                 // await PostsModel.findOneAndUpdate({id: postId}, {"likesInfo.myStatus": likeStatus})
-                await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1, "extendedLikesInfo.dislikesCount": 1}})
+                const posts:PostType|null = await PostsModel.findOneAndUpdate({id: postId}, {$inc: {"extendedLikesInfo.likesCount": -1, "extendedLikesInfo.dislikesCount": 1}})
+
+                // @ts-ignore
+                posts.extendedLikesInfo.newestLikes = posts.extendedLikesInfo.newestLikes.filter(obj => obj.userId !== user.id)
+
+                // @ts-ignore
+                await posts.save()
+
+
+
+                // if(posts) {
+                //     // @ts-ignore
+                //     for(const like of posts.extendedLikesInfo.newestLikes) {
+                //         // @ts-ignore
+                //         if(like.userId === user.id) {
+                //
+                //         }
+                //     }
+                // }
+
                 return true
             }
 

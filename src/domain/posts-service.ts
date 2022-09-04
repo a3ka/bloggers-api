@@ -51,6 +51,7 @@ class PostsService {
     }
 
     async getPostById (postId: string, userId?: string) {
+        debugger
         const post = await this.postsRepository.getPostById(postId)
         if(post === null) {
             return undefined
@@ -64,8 +65,12 @@ class PostsService {
             // @ts-ignore
             const [likesStatus, post] = await this.postsRepository.getPostById(postId, userId)
 
-            post!.extendedLikesInfo.myStatus = likesStatus.likeStatus
-            return post
+            if(likesStatus === null) {
+                return post
+            } else {
+                post!.extendedLikesInfo.myStatus = likesStatus.likeStatus
+                return post
+            }
         }
     }
 

@@ -171,9 +171,11 @@ postsRouter.put('/:postId/like-status',
     fieldsValidationMiddleware.likeStatusValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
+        debugger
+        // @ts-ignore
+        const post = await postsService.getPostById(req.params.postId, req.user)
 
-        const post = await postsService.getPostById(req.params.postId)
-
+        debugger
         if (!post) {
             res.status(404).send({
                 errorsMessages: [{
