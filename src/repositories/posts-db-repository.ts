@@ -78,7 +78,7 @@ export class PostsRepository {
                 }
 
                 // @ts-ignore
-                a.extendedLikesInfo.newestLikes = [...a.extendedLikesInfo.newestLikes, newestLike]
+                a.extendedLikesInfo.newestLikes = [newestLike, ...a.extendedLikesInfo.newestLikes]
                 // @ts-ignore
                 await a.save()
                 return true
@@ -100,7 +100,7 @@ export class PostsRepository {
                     login: user.login
                 }
                 // @ts-ignore
-                a.extendedLikesInfo.newestLikes = [...a.extendedLikesInfo.newestLikes, newestLike]
+                a.extendedLikesInfo.newestLikes = [newestLike, ...a.extendedLikesInfo.newestLikes]
                 // @ts-ignore
                 await a.save()
                 return true
@@ -115,7 +115,7 @@ export class PostsRepository {
                     login: user.login
                 }
                 // @ts-ignore
-                a.extendedLikesInfo.newestLikes = [...a.extendedLikesInfo.newestLikes, newestLike]
+                a.extendedLikesInfo.newestLikes = [newestLike, ...a.extendedLikesInfo.newestLikes]
                 // @ts-ignore
                 await a.save()
                 return true
