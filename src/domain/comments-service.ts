@@ -34,7 +34,7 @@ class CommentsService {
                     }
                 }
             }
-            
+
             return comments
         }
 
