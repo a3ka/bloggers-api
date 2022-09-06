@@ -95,32 +95,40 @@ class PostsService {
 
     async getPostById(postId: string, userId?: string) {
 
-        const post = await this.postsRepository.getPostById(postId)
-        if (post === null) {
-            return undefined
-        }
-
-        if(post) {
-            // @ts-ignore
-            post.extendedLikesInfo.newestLikes = post.extendedLikesInfo.newestLikes.splice(0, 3)
-        } else {
-            return undefined
-        }
+        debugger
 
         if (!userId) {
-            // @ts-ignore
-            post!.extendedLikesInfo.myStatus = "None"
-            return post
+            const post = await this.postsRepository.getPostById(postId)
+
+            if(post) {
+                debugger
+                // @ts-ignore
+                post.extendedLikesInfo.newestLikes = post.extendedLikesInfo.newestLikes.splice(0, 3)
+                // @ts-ignore
+                post!.extendedLikesInfo.myStatus = "None"
+                return post
+            } else {
+                return undefined
+            }
         } else {
+            debugger
             // @ts-ignore
             const [likesStatus, post] = await this.postsRepository.getPostById(postId, userId)
 
-            if (likesStatus === null) {
-                return post
-            } else {
-                post!.extendedLikesInfo.myStatus = likesStatus.likeStatus
+            debugger
+
+            if(!post) {
+                return undefined
+            }
+
+            if (!likesStatus) {
                 return post
             }
+
+            post.extendedLikesInfo.newestLikes = post.extendedLikesInfo.newestLikes.splice(0, 3)
+            post!.extendedLikesInfo.myStatus = likesStatus.likeStatus
+            return post
+
         }
     }
 

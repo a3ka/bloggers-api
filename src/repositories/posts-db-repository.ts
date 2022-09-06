@@ -35,6 +35,8 @@ export class PostsRepository {
     }
 
     async getPostById(postId: string, userId?: string) {
+        debugger
+
         if(!userId) {
             return PostsModel.findOne({id: postId}, {_id: 0, __v: 0})
         }
@@ -42,7 +44,7 @@ export class PostsRepository {
         if(userId) {
             // const likesStatus:LikesStatusType|null = await likesStatusCollection.find({id: postId, userId}).limit(3).toArray() // ?????
             // @ts-ignore
-            const likesStatus:LikesStatusType|null = await likesStatusCollection.find({id: postId, userId}).toArray()
+            const likesStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: postId, userId})
 
             const post = await PostsModel.findOne({id: postId}, {_id: 0, __v: 0})
             return [likesStatus, post]
