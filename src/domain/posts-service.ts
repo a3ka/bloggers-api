@@ -1,6 +1,6 @@
 import {BloggersRepository} from "../repositories/bloggers-db-repository";
 import {PostsRepository} from "../repositories/posts-db-repository";
-import {PostType} from "../repositories/db";
+import {PostsOfBloggerType, PostType} from "../repositories/db";
 
 
 class PostsService {
@@ -26,19 +26,27 @@ class PostsService {
     //     return posts
     // }
 
-    async getAllPosts(pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null, userId?: string): Promise<{}> {
+    async getAllPosts(pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null, userId?: string) {
 
         if (!userId) {
-            const postsDb = await this.postsRepository.getAllPosts(+pageNumber, +pageSize)
-            // @ts-ignore
-            const posts = {...postsDb}
 
-            // @ts-ignore
-            for (let i = 0; i < posts.items.length; i++) {
-                // @ts-ignore
-                delete posts.items[i]._id
+            const posts = await this.postsRepository.getAllPosts(+pageNumber, +pageSize)
+
+            if (posts) {
+                for(let item of posts.items) {
+                    // @ts-ignore
+                    item.extendedLikesInfo.newestLikes = item.extendedLikesInfo.newestLikes.splice(0, 3)
+                }
+                return posts
+            } else {
+                return false
             }
-            return posts
+
+            // // @ts-ignore
+            // for (let i = 0; i < posts.items.length; i++) {
+            //     // @ts-ignore
+            //     delete posts.items[i]._id
+            // }
         } else {
 
             // @ts-ignore
@@ -50,6 +58,11 @@ class PostsService {
                         el.extendedLikesInfo.myStatus = item.likeStatus
                     }
                 }
+            }
+
+            for(let item of posts.items) {
+                // @ts-ignore
+                item.extendedLikesInfo.newestLikes = item.extendedLikesInfo.newestLikes.splice(0, 3)
             }
 
             return posts
@@ -84,6 +97,13 @@ class PostsService {
 
         const post = await this.postsRepository.getPostById(postId)
         if (post === null) {
+            return undefined
+        }
+
+        if(post) {
+            // @ts-ignore
+            post.extendedLikesInfo.newestLikes = post.extendedLikesInfo.newestLikes.splice(0, 3)
+        } else {
             return undefined
         }
 

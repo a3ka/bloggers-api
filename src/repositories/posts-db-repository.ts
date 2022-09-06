@@ -40,7 +40,10 @@ export class PostsRepository {
         }
 
         if(userId) {
-            const likesStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: postId, userId})
+            // const likesStatus:LikesStatusType|null = await likesStatusCollection.find({id: postId, userId}).limit(3).toArray() // ?????
+            // @ts-ignore
+            const likesStatus:LikesStatusType|null = await likesStatusCollection.find({id: postId, userId}).toArray()
+
             const post = await PostsModel.findOne({id: postId}, {_id: 0, __v: 0})
             return [likesStatus, post]
         }
