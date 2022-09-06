@@ -95,13 +95,10 @@ class PostsService {
 
     async getPostById(postId: string, userId?: string) {
 
-        debugger
-
         if (!userId) {
             const post = await this.postsRepository.getPostById(postId)
 
             if(post) {
-                debugger
                 // @ts-ignore
                 post.extendedLikesInfo.newestLikes = post.extendedLikesInfo.newestLikes.splice(0, 3)
                 // @ts-ignore
@@ -111,11 +108,8 @@ class PostsService {
                 return undefined
             }
         } else {
-            debugger
             // @ts-ignore
             const [likesStatus, post] = await this.postsRepository.getPostById(postId, userId)
-
-            debugger
 
             if(!post) {
                 return undefined

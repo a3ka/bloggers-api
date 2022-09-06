@@ -15,6 +15,7 @@ export const authBearerMiddleware = async (req: Request, res: Response, next: Ne
     if(userId) {
         // @ts-ignore
         req.user = await usersService.findUserById(userId)
+        // @ts-ignore
         next()
     } else {
         res.send(401)

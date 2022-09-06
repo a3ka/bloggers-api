@@ -83,7 +83,8 @@ class CommentsService {
 
     async updateLikeStatus (user: any, commentId: string, likeStatus: "None" | "Like" | "Dislike"): Promise<boolean|undefined>  {
 
-        return this.commentsRepository.updateLikeStatus(user, commentId, likeStatus)
+        const comment = await this.commentsRepository.updateLikeStatus(user, commentId, likeStatus)
+        return comment
     }
 }
 

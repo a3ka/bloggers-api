@@ -30,6 +30,7 @@ export class CommentsRepository {
 
         if(userId) {
             const likesStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: commentId, userId})
+
             const comment = await CommentsModel.findOne({id: commentId}, {_id: 0, postId: 0, __v: 0})
 
             return [likesStatus, comment]
@@ -66,16 +67,17 @@ export class CommentsRepository {
 
     async updateLikeStatus(user: any, commentId: string, likeStatus: "None" | "Like" | "Dislike"): Promise<boolean|undefined> {
 
+
         const isLikeStatus:LikesStatusType|null = await likesStatusCollection.findOne({id: commentId, userId: user.id})
 
         if (!isLikeStatus) {
             await likesStatusCollection.insertOne({id: commentId, userId: user.id, likeStatus})
             if(likeStatus === "Like") {
-                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1}, "likesInfo.myStatus": likeStatus})
+                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1}})
                 return true
             }
             if(likeStatus === "Dislike") {
-                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.dislikesCount": 1}, "likesInfo.myStatus": likeStatus})
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.dislikesCount": 1}})
                 return true
             }
 
@@ -84,12 +86,12 @@ export class CommentsRepository {
             await likesStatusCollection.updateOne({id: commentId, userId: user.id}, {$set: {likeStatus}})
 
             if(likeStatus === "Like" && isLikeStatus.likeStatus === "Dislike") {
-                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1, "likesInfo.dislikesCount": -1}, "likesInfo.myStatus": likeStatus})
+                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1, "likesInfo.dislikesCount": -1}})
                 return true
             }
 
             if(likeStatus === "Like" && isLikeStatus.likeStatus === "None") {
-                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1}, "likesInfo.myStatus": likeStatus})
+                const a = await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": 1}})
                 return true
             }
 
@@ -98,7 +100,7 @@ export class CommentsRepository {
             }
 
             if(likeStatus === "Dislike" && isLikeStatus.likeStatus === "Like") {
-                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1, "likesInfo.dislikesCount": 1}, "likesInfo.myStatus": likeStatus})
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1, "likesInfo.dislikesCount": 1}})
                 return true
             }
 
@@ -107,17 +109,17 @@ export class CommentsRepository {
             }
 
             if(likeStatus === "Dislike" && isLikeStatus.likeStatus !== "Like") {
-                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1}, "likesInfo.myStatus": likeStatus})
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1}})
                 return true
             }
 
             if(likeStatus === "None" && isLikeStatus.likeStatus === "Like") {
-                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1}, "likesInfo.myStatus": likeStatus})
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.likesCount": -1}})
                 return true
             }
 
             if(likeStatus === "None" && isLikeStatus.likeStatus === "Dislike") {
-                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.dislikesCount": -1}, "likesInfo.myStatus": likeStatus})
+                await CommentsModel.findOneAndUpdate({id: commentId}, {$inc: {"likesInfo.dislikesCount": -1}})
                 return true
             }
 
