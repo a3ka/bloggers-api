@@ -47,7 +47,6 @@ class BloggersService {
 
     async getPostsByBloggerId(bloggerId: string, pageNumber: string = '1' || undefined || null, pageSize: string = '10' || undefined || null, userId?: string): Promise<PostsOfBloggerType | null | undefined> {
 
-
         if (!userId) {
 
             const posts = await this.bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize);
@@ -85,19 +84,13 @@ class BloggersService {
 
 
 
-
-
-
-
-
-
-
-        const posts = await this.bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize);
-
-        if(posts) {
-
-            return posts
-        }
+        //
+        // const posts = await this.bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize);
+        //
+        // if(posts) {
+        //
+        //     return posts
+        // }
 
     }
 

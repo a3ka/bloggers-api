@@ -4,7 +4,7 @@ import {
 } from "./db";
 
 export class CommentsRepository {
-    async getAllCommentsToPost (postId: string, pageNumber: number, pageSize:number): Promise<CommentsExtendedType | undefined | null> {
+    async getAllCommentsToPost (postId: string, pageNumber: number, pageSize:number, userId?: string): Promise<CommentsExtendedType | undefined | null> {
 
         const commentsCount = await CommentsModel.count({postId})
         const pagesCount = Math.ceil(commentsCount / pageSize)
@@ -18,8 +18,15 @@ export class CommentsRepository {
             items: comments
         }
 
-        // @ts-ignore
-        return result
+        if (!userId){
+            // @ts-ignore
+            return result
+        } else {
+            const likesStatus:LikesStatusType[]|null = await likesStatusCollection.find({userId}).toArray()
+            // @ts-ignore
+            return [likesStatus, result]
+        }
+
     }
 
     async findComment (commentId: string, userId?:string) {

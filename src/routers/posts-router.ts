@@ -11,6 +11,7 @@ import {jwtService} from "../application/jwt-service";
 import {commentsRouter} from "./comments-router";
 import {usersService} from "../domain/users-service";
 import {isLogInMiddleware} from "../middlewares/isLogIn-middleware";
+import {bloggersService} from "../domain/bloggers-service";
 
 
 export const postsRouter = Router({});
@@ -139,26 +140,20 @@ postsRouter.post('/:postId/comments',
         const post = await postsService.getPostById(req.params.postId)
 
         if (!post) {
-            res.status(404).send({
-                errorsMessages: [{
-                    message: "Post with specified postId doesn't exists",
-                    field: "postId"
-                }]
-            });
+            res.status(404).send({errorsMessages: [{message: "Post with specified postId doesn't exists", field: "postId"}]});
             return
         }
 
         // @ts-ignore
         const newComment = await commentsService.createCommentByPostId(req.user, req.params.postId, req.body.content)
-
         res.status(201).send(newComment)
     }
 )
 
-postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
-
-
-        const post = await postsService.getPostById(req.params.postId,)
+postsRouter.get('/:postId/comments',
+    isLogInMiddleware,
+    async (req: Request, res: Response) => {
+        const post = await postsService.getPostById(req.params.postId)
 
         if (!post) {
             res.status(404).send({
@@ -167,13 +162,21 @@ postsRouter.get('/:postId/comments', async (req: Request, res: Response) => {
                     field: "postId"
                 }]
             });
-            return
         }
 
         // @ts-ignore
-        const comments = await commentsService.getAllCommentsByPostId(req.params.postId, req.query.PageNumber, req.query.PageSize)
+        if (!req.user) {
+            // @ts-ignore
+            const comments = await commentsService.getAllCommentsByPostId(req.params.postId, req.query.PageNumber, req.query.PageSize)
+            res.status(200).send(comments)
+        }
 
-        res.status(200).send(comments)
+        // @ts-ignore
+        if (req.user) {
+            // @ts-ignore
+            const comments = await commentsService.getAllCommentsByPostId(req.params.postId, req.query.PageNumber, req.query.PageSize, req.user)
+            res.status(200).send(comments)
+        }
     }
 )
 

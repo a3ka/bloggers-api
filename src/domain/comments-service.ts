@@ -14,9 +14,42 @@ class CommentsService {
         this.commentsRepository = new CommentsRepository()
         this.postsRepository = new PostsRepository()
     }
-    async getAllCommentsByPostId (postId: string, pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null): Promise<CommentsExtendedType | undefined | null> {
-        const posts = await this.commentsRepository.getAllCommentsToPost(postId, +pageNumber, +pageSize)
-        return posts
+    async getAllCommentsByPostId (postId: string, pageNumber: string = "1" || undefined || null, pageSize: string = "10" || undefined || null, userId?: string): Promise<CommentsExtendedType | undefined | null> {
+
+        if (!userId) {
+            const comments = await this.commentsRepository.getAllCommentsToPost(postId, +pageNumber, +pageSize)
+            if (!comments) {
+                return undefined
+            }
+            return comments
+
+        } else {
+            // @ts-ignore
+            const [likesStatus, comments] = await this.commentsRepository.getAllCommentsToPost(postId, +pageNumber, +pageSize, userId);
+
+            for(const el of comments.items) {
+                for(const item of likesStatus) {
+                    if(item.id === el.id) {
+                        el.likesInfo.myStatus = item.likeStatus
+                    }
+                }
+            }
+            
+            return comments
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     async findComment (commentId: string, userId?: string) {
@@ -50,8 +83,8 @@ class CommentsService {
     }
 
     async createCommentByPostId (user:any, postId: string, content:string): Promise<CommentType | undefined> {
-
         const post = await this.postsRepository.getPostById(postId)
+
         if (post) {
 
             const newComment = {
