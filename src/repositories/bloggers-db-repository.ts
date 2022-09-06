@@ -4,7 +4,7 @@ import {
     BloggersType,
     PostsModel,
     PostsOfBloggerType,
-    PostType
+    PostType, LikesStatusType, likesStatusCollection
 } from "./db";
 
 export class BloggersRepository {
@@ -69,7 +69,7 @@ export class BloggersRepository {
         return result.deletedCount === 1
     }
 
-    async getPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<PostsOfBloggerType | null> {
+    async getPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, userId?: string): Promise<PostsOfBloggerType | null> {
 
         const postsCount = await PostsModel.count({bloggerId})
         const pagesCount = Math.ceil(postsCount / pageSize)
@@ -83,8 +83,15 @@ export class BloggersRepository {
             items: posts
         }
 
-        // @ts-ignore
-        return result
+        if (!userId){
+            // @ts-ignore
+            return result
+        } else {
+            const likesStatus:LikesStatusType[]|null = await likesStatusCollection.find({userId}).toArray()
+            // @ts-ignore
+            return [likesStatus, result]
+        }
+
     }
 
     async isBlogger(bloggerId: string):Promise<boolean> {

@@ -42,11 +42,6 @@ class PostsService {
                 return false
             }
 
-            // // @ts-ignore
-            // for (let i = 0; i < posts.items.length; i++) {
-            //     // @ts-ignore
-            //     delete posts.items[i]._id
-            // }
         } else {
 
             // @ts-ignore

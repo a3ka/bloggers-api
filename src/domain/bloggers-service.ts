@@ -45,10 +45,60 @@ class BloggersService {
         return this.bloggersRepository.deleteBlogger(bloggerId)
     }
 
-    async getPostsByBloggerId(bloggerId: string, pageNumber: string = '1' || undefined || null, pageSize: string = '10' || undefined || null): Promise<PostsOfBloggerType | null> {
-        const postsDb = await this.bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize);
-        // const posts = omit_Id(postsDb)
-        return postsDb
+    async getPostsByBloggerId(bloggerId: string, pageNumber: string = '1' || undefined || null, pageSize: string = '10' || undefined || null, userId?: string): Promise<PostsOfBloggerType | null | undefined> {
+
+
+        if (!userId) {
+
+            const posts = await this.bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize);
+
+            if (posts) {
+                for(let item of posts.items) {
+                    // @ts-ignore
+                    item.extendedLikesInfo.newestLikes = item.extendedLikesInfo.newestLikes.splice(0, 3)
+                }
+                return posts
+            } else {
+                return undefined
+            }
+
+        } else {
+
+            // @ts-ignore
+            const [likesStatus, posts] = await this.bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize, userId);
+
+            for(const el of posts.items) {
+                for(const item of likesStatus) {
+                    if(item.id === el.id && item.userId === userId) {
+                        el.extendedLikesInfo.myStatus = item.likeStatus
+                    }
+                }
+            }
+
+            for(let item of posts.items) {
+                // @ts-ignore
+                item.extendedLikesInfo.newestLikes = item.extendedLikesInfo.newestLikes.splice(0, 3)
+            }
+
+            return posts
+        }
+
+
+
+
+
+
+
+
+
+
+        const posts = await this.bloggersRepository.getPostsByBloggerId(bloggerId, +pageNumber, +pageSize);
+
+        if(posts) {
+
+            return posts
+        }
+
     }
 
     async createPostByBloggerId (bloggerId: string, title: string, shortDescription: string, content: string) {

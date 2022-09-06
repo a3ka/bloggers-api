@@ -126,7 +126,6 @@ commentsRouter.put('/:commentId/like-status',
         // @ts-ignore
         console.log("1-user: " + req.user)
         const comment = await commentsService.findComment(req.params.commentId)
-        debugger
         if (!comment) {
             res.status(404).send({errorsMessages: [{message: "Comment not found", field: "commentId"}]});
             return

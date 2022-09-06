@@ -4,6 +4,7 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {authBaseMiddleware} from "../middlewares/auth-base-middleware";
 import {fieldsValidationMiddleware} from "../middlewares/fields-validation-middleware";
 import {bloggersRepository} from "../repositories/bloggers-db-repository";
+import {isLogInMiddleware} from "../middlewares/isLogIn-middleware";
 
 export const bloggersRouter = Router({})
 
@@ -73,14 +74,26 @@ bloggersRouter.delete('/:bloggerId',
     }
 )
 
-bloggersRouter.get('/:bloggerId/posts', async (req: Request, res: Response) => {
+bloggersRouter.get('/:bloggerId/posts',
+    isLogInMiddleware,
+    async (req: Request, res: Response) => {
 
         const blogger = await bloggersRepository.isBlogger(req.params.bloggerId);
         if (!blogger) {
             res.status(404).send({errorsMessages: [{message: "Problem with a bloggerId field", field: "bloggerId"}]});
-        } else {
+        }
+
+        // @ts-ignore
+        if(!req.user) {
             // @ts-ignore
             const posts = await bloggersService.getPostsByBloggerId(req.params.bloggerId, req.query.PageNumber, req.query.PageSize);
+            res.status(200).send(posts);
+        }
+
+        // @ts-ignore
+        if(req.user) {
+            // @ts-ignore
+            const posts = await bloggersService.getPostsByBloggerId(req.params.bloggerId, req.query.PageNumber, req.query.PageSize, req.user);
             res.status(200).send(posts);
         }
     }
@@ -104,7 +117,12 @@ bloggersRouter.post('/:bloggerId/posts',
             if (newPost) {
                 res.status(201).send(newPost)
             } else {
-                res.status(400).send({errorsMessages: [{message: "Problem with a bloggerId field", field: "bloggerId"}]})
+                res.status(400).send({
+                    errorsMessages: [{
+                        message: "Problem with a bloggerId field",
+                        field: "bloggerId"
+                    }]
+                })
             }
         }
 

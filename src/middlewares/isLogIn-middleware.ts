@@ -3,7 +3,6 @@ import {jwtService} from "../application/jwt-service";
 import {usersService} from "../domain/users-service";
 
 export const isLogInMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-
     const header = req.headers.authorization
     if (!header) {
         next()
